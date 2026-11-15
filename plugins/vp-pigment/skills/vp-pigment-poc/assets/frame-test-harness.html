@@ -1,0 +1,65 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Frame test harness</title>
+<style>body{margin:0}</style></head>
+<body><div id="app"></div>
+<script>
+/*
+  Mock Pigment SDK for testing a frame outside Pigment.
+  1. Put this file next to the frame's .js and change the script src at the bottom.
+  2. Fill D: one function per data source name, returning rows shaped
+     { labels: [list item, ...], values: [value, ...] } in the frame's binding order.
+  3. Tell FILTER_POS which label position each list binding filters on.
+  4. Serve the folder (assets/serve.ps1) and open http://localhost:8765/frame-test-harness.html
+  Check window.__errors (should be []) and window.__writes (every editValue call).
+  See examples/trust-payments-spm-cockpit/test_harness.html for a filled-in version.
+*/
+window.__errors = [];
+window.addEventListener('error', function (e) { window.__errors.push(String(e.message) + ' @' + e.lineno); });
+(function () {
+  function rnd(s) { var x = Math.sin(s) * 10000; return x - Math.floor(x); }
+
+  // ---- Sample data: one entry per data source the frame subscribes to ----
+  var D = {
+    dsExample: function () {
+      return ['North', 'South', 'East'].map(function (r, i) {
+        return { labels: [r], values: [1000 + rnd(i) * 500, 0.1 + rnd(i + 9) * 0.2] };
+      });
+    }
+  };
+  // Which label position each list binding filters on, per data source (default 0)
+  var FILTER_POS = { /* dsExample: { regionList: 0 } */ };
+
+  function applyFilters(rows, filters, name) {
+    (filters || []).forEach(function (f) {
+      var pos = (FILTER_POS[name] && FILTER_POS[name][f.binding]) || 0;
+      rows = rows.filter(function (r) { return f.selection.indexOf(r.labels[pos]) >= 0; });
+    });
+    return rows;
+  }
+
+  var active = 0;
+  window.__writes = [];
+  window.PigmentSDK = {
+    subscribeToDataSource: function (name, o) {
+      active++;
+      if (active > 10) { setTimeout(function () { o.onError && o.onError({ message: 'Too many active subscriptions for this resource (mock limit 10)' }); }, 10); }
+      if (!D[name]) { setTimeout(function () { o.onError && o.onError({ message: 'No mock data for ' + name }); }, 10); return { unsubscribe: function () { active--; } }; }
+      var f = o.dynamicFilters || [], off = 0, dead = false;
+      function send() { if (dead) return; var rows = applyFilters(D[name](), f, name); o.onData({ rows: rows.slice(off, off + 500), totalRowCount: rows.length, rowOffset: off }); }
+      setTimeout(function () { o.onData({ rows: [{ labels: [{ kind: 'loading' }], values: [{ kind: 'loading' }] }], totalRowCount: 1 }); }, 10);
+      setTimeout(send, 200);
+      return {
+        unsubscribe: function () { if (!dead) { dead = true; active--; } },
+        updateDynamicFilters: function (nf) { f = nf; setTimeout(send, 100); },
+        updateScroll: function (s) { off = s.offset; setTimeout(send, 50); }
+      };
+    },
+    editValue: function (sink, coords, v) {
+      window.__writes.push([sink, coords, v]);
+      return new Promise(function (res) { setTimeout(res, 300); });
+    }
+  };
+})();
+</script>
+<script src="my_frame.js"></script>
+</body></html>

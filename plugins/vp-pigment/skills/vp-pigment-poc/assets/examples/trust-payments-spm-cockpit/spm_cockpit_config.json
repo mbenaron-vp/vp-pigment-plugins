@@ -1,0 +1,301 @@
+﻿{
+    "id":  "7f5f1f7a-c053-4200-969c-5b8423367541",
+    "name":  "SPM Cockpit",
+    "isPrivate":  true,
+    "dataSources":  [
+                        {
+                            "name":  "dsAtt",
+                            "labels":  [
+                                           {
+                                               "binding":  "ownerList"
+                                           },
+                                           {
+                                               "binding":  "monthList"
+                                           }
+                                       ],
+                            "selectors":  [
+
+                                          ],
+                            "values":  [
+                                           {
+                                               "binding":  "mAtt"
+                                           },
+                                           {
+                                               "binding":  "mR12"
+                                           },
+                                           {
+                                               "binding":  "mTgtM"
+                                           },
+                                           {
+                                               "binding":  "mCrM"
+                                           },
+                                           {
+                                               "binding":  "mInWin"
+                                           }
+                                       ]
+                        },
+                        {
+                            "name":  "dsBands",
+                            "labels":  [
+                                           {
+                                               "binding":  "bandList"
+                                           }
+                                       ],
+                            "selectors":  [
+
+                                          ],
+                            "values":  [
+                                           {
+                                               "binding":  "mFloor"
+                                           }
+                                       ]
+                        },
+                        {
+                            "name":  "dsCo",
+                            "labels":  [
+                                           {
+                                               "binding":  "monthList"
+                                           }
+                                       ],
+                            "selectors":  [
+
+                                          ],
+                            "values":  [
+                                           {
+                                               "binding":  "mCoAtt"
+                                           }
+                                       ]
+                        },
+                        {
+                            "name":  "dsGrid",
+                            "labels":  [
+                                           {
+                                               "binding":  "bandList"
+                                           },
+                                           {
+                                               "binding":  "verticalList"
+                                           }
+                                       ],
+                            "selectors":  [
+
+                                          ],
+                            "values":  [
+                                           {
+                                               "binding":  "mRateGrid"
+                                           }
+                                       ]
+                        },
+                        {
+                            "name":  "dsMerch",
+                            "labels":  [
+                                           {
+                                               "binding":  "merchantList"
+                                           },
+                                           {
+                                               "binding":  "monthList"
+                                           }
+                                       ],
+                            "selectors":  [
+                                              {
+                                                  "binding":  "merchantList"
+                                              },
+                                              {
+                                                  "binding":  "monthList"
+                                              }
+                                          ],
+                            "values":  [
+                                           {
+                                               "binding":  "mMGP"
+                                           },
+                                           {
+                                               "binding":  "mCr"
+                                           },
+                                           {
+                                               "binding":  "mMRate"
+                                           },
+                                           {
+                                               "binding":  "mMComm"
+                                           },
+                                           {
+                                               "binding":  "mLive"
+                                           }
+                                       ]
+                        },
+                        {
+                            "name":  "dsMerchants",
+                            "labels":  [
+                                           {
+                                               "binding":  "merchantList"
+                                           }
+                                       ],
+                            "selectors":  [
+
+                                          ],
+                            "values":  [
+                                           {
+                                               "binding":  "pOwner"
+                                           },
+                                           {
+                                               "binding":  "pVertical"
+                                           }
+                                       ]
+                        },
+                        {
+                            "name":  "dsQ",
+                            "labels":  [
+                                           {
+                                               "binding":  "ownerList"
+                                           },
+                                           {
+                                               "binding":  "quarterList"
+                                           }
+                                       ],
+                            "selectors":  [
+
+                                          ],
+                            "values":  [
+                                           {
+                                               "binding":  "mQAtt"
+                                           },
+                                           {
+                                               "binding":  "mQGP"
+                                           },
+                                           {
+                                               "binding":  "mEff"
+                                           },
+                                           {
+                                               "binding":  "mPay"
+                                           }
+                                       ]
+                        },
+                        {
+                            "name":  "dsReps",
+                            "labels":  [
+                                           {
+                                               "binding":  "ownerList"
+                                           }
+                                       ],
+                            "selectors":  [
+
+                                          ],
+                            "values":  [
+                                           {
+                                               "binding":  "mSalary"
+                                           },
+                                           {
+                                               "binding":  "mTMult"
+                                           },
+                                           {
+                                               "binding":  "mTarget"
+                                           },
+                                           {
+                                               "binding":  "mL12"
+                                           },
+                                           {
+                                               "binding":  "mAch"
+                                           }
+                                       ]
+                        },
+                        {
+                            "name":  "dsRV",
+                            "labels":  [
+                                           {
+                                               "binding":  "ownerList"
+                                           },
+                                           {
+                                               "binding":  "quarterList"
+                                           },
+                                           {
+                                               "binding":  "verticalList"
+                                           }
+                                       ],
+                            "selectors":  [
+                                              {
+                                                  "binding":  "quarterList"
+                                              }
+                                          ],
+                            "values":  [
+                                           {
+                                               "binding":  "mRVgp"
+                                           },
+                                           {
+                                               "binding":  "mRate"
+                                           },
+                                           {
+                                               "binding":  "mRVcomm"
+                                           }
+                                       ]
+                        },
+                        {
+                            "name":  "dsSeg",
+                            "labels":  [
+                                           {
+                                               "binding":  "segmentList"
+                                           }
+                                       ],
+                            "selectors":  [
+
+                                          ],
+                            "values":  [
+                                           {
+                                               "binding":  "mSegMult"
+                                           },
+                                           {
+                                               "binding":  "mSegAch"
+                                           }
+                                       ]
+                        },
+                        {
+                            "name":  "dsTeam",
+                            "labels":  [
+                                           {
+                                               "binding":  "ownerList"
+                                           }
+                                       ],
+                            "selectors":  [
+
+                                          ],
+                            "values":  [
+                                           {
+                                               "binding":  "pTeam"
+                                           }
+                                       ]
+                        },
+                        {
+                            "name":  "dsWin",
+                            "labels":  [
+
+                                       ],
+                            "selectors":  [
+
+                                          ],
+                            "values":  [
+                                           {
+                                               "binding":  "mWindow"
+                                           }
+                                       ]
+                        }
+                    ],
+    "dataSinks":  [
+                      {
+                          "name":  "floorSink",
+                          "binding":  "mFloor"
+                      },
+                      {
+                          "name":  "multSink",
+                          "binding":  "mTMult"
+                      },
+                      {
+                          "name":  "rateSink",
+                          "binding":  "mRateGrid"
+                      },
+                      {
+                          "name":  "segSink",
+                          "binding":  "mSegMult"
+                      },
+                      {
+                          "name":  "windowSink",
+                          "binding":  "mWindow"
+                      }
+                  ]
+}

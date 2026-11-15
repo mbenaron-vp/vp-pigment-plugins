@@ -1,0 +1,10 @@
+# OS and editor files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Never commit client source files or exports
+*.xlsx
+*.xlsm
+*.csv

@@ -1,0 +1,17 @@
+{
+  "name": "vp-pigment-plugins",
+  "owner": {
+    "name": "VantagePoint Consulting"
+  },
+  "metadata": {
+    "description": "VantagePoint's Claude Code plugins for building Pigment demos and client POCs."
+  },
+  "plugins": [
+    {
+      "name": "vp-pigment",
+      "source": "./plugins/vp-pigment",
+      "description": "Build or review a client-tailored, VantagePoint-branded Pigment demo or POC: story, boards, cockpit frame, demo script with a model explainer, and a test pass.",
+      "version": "1.0.0"
+    }
+  ]
+}

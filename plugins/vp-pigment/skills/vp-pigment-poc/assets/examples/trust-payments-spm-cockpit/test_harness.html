@@ -1,0 +1,51 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>SPM cockpit test</title>
+<style>body{margin:0}</style></head>
+<body><div id="app"></div>
+<script>
+window.__errors = [];
+window.addEventListener('error', function (e) { window.__errors.push(String(e.message) + ' @' + e.lineno); });
+(function () {
+  var reps = [['Sophie Marsh','Enterprise',48000],['James Whitfield','Enterprise',55000],['Priya Raman','Enterprise',45000],['Dan Okafor','Enterprise',85000],['Amira Haddad','Enterprise',65000],['Tom Hallam','Mid-Market',50000],['Chloe Brennan','Mid-Market',58000],['Marco Ferri','Mid-Market',46000],['Hannah Lowe','Mid-Market',45000],['Luke Daniels','Mid-Market',40000],['Ravi Shah','Partnerships',60000],['Ellie Park','Partnerships',55000]];
+  var segm = { Enterprise: 6, 'Mid-Market': 5, Partnerships: 8 };
+  var N = 'Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec'.split(' ');
+  var months = []; for (var k = 2023 * 12 + 9; k <= 2026 * 12 + 8; k++) months.push(N[k % 12] + ' ' + String(Math.floor(k / 12)).slice(2));
+  var qs = []; months.forEach(function (m) { var i = N.indexOf(m.slice(0, 3)); var q = 'Q' + (Math.floor(i / 3) + 1) + ' ' + m.slice(4); if (qs.indexOf(q) < 0) qs.push(q); });
+  var verts = ['Retail', 'Travel', 'Hospitality', 'Gaming', 'Financial Services', 'Digital Goods'];
+  var bands = [['125% and above', 1.25], ['110% to 125%', 1.1], ['100% to 110%', 1.0], ['80% to 100%', 0.8], ['Below 80%', 0]];
+  function rnd(s) { var x = Math.sin(s) * 10000; return x - Math.floor(x); }
+  var D = {
+    dsReps: function () { return reps.map(function (r, i) { var t = r[2] * segm[r[1]], l = t * (0.4 + rnd(i + 1) * 1.6); return { labels: [r[0]], values: [r[1], r[2], segm[r[1]], t, l, l / r[2]] }; }); },
+    dsSeg: function () { return Object.keys(segm).map(function (s, i) { return { labels: [s], values: [segm[s], segm[s] * (1 + rnd(i) * 0.3)] }; }); },
+    dsAtt: function () { var o = []; reps.forEach(function (r, i) { var t = r[2] * segm[r[1]]; months.forEach(function (m, j) { var r12 = t * (0.3 + j / 36 + rnd(i * 50 + j) * 0.3); o.push({ labels: [r[0], m], values: [r12 / t, r12, t, r12 / 12, 3 + (i + j) % 6] }); }); }); return o; },
+    dsCo: function () { return months.map(function (m, j) { return { labels: [m], values: [0.8 + j / 120] }; }); },
+    dsQ: function () { var o = []; reps.forEach(function (r, i) { qs.forEach(function (q, j) { var a = 0.4 + rnd(i * 7 + j) * 1.2, gp = 20000 + rnd(i + j * 3) * 200000; o.push({ labels: [r[0], q], values: [a, gp, a >= 0.8 ? 0.06 : 0, a >= 0.8 ? gp * 0.06 : 0] }); }); }); return o; },
+    dsRV: function () { var o = []; reps.forEach(function (r, i) { qs.forEach(function (q) { verts.forEach(function (v, k) { var gp = rnd(i * 11 + k) * 30000; o.push({ labels: [r[0], q, v], values: [gp, 0.04 + k * 0.01, gp * (0.04 + k * 0.01)] }); }); }); }); return o; },
+    dsBands: function () { return bands.map(function (b) { return { labels: [b[0]], values: [b[1]] }; }); },
+    dsGrid: function () { var o = []; bands.forEach(function (b, i) { verts.forEach(function (v, k) { o.push({ labels: [b[0], v], values: [i === 4 ? 0 : 0.12 - i * 0.02 - k * 0.005] }); }); }); return o; },
+    dsWin: function () { return [{ labels: [], values: [12] }]; },
+    dsMerchants: function () { var o = []; for (var i = 0; i < 60; i++) o.push({ labels: ['Merchant ' + i], values: [reps[i % 12][0], verts[i % 6]] }); return o; },
+    dsMerch: function () { var o = []; for (var i = 0; i < 60; i++) months.forEach(function (m, j) { o.push({ labels: ['Merchant ' + i, m], values: [1000 + i * 37, 1000 + i * 37, 0.06, 60 + i, j % 14] }); }); return o; }
+  };
+  function applyF(rows, f, name) {
+    (f || []).forEach(function (fl) {
+      var pos = { merchantList: 0, monthList: name === 'dsMerch' ? 1 : 0, quarterList: 1 }[fl.binding];
+      rows = rows.filter(function (r) { return fl.selection.indexOf(r.labels[pos]) >= 0; });
+    });
+    return rows;
+  }
+  window.__writes = [];
+  window.PigmentSDK = {
+    subscribeToDataSource: function (name, o) {
+      var f = o.dynamicFilters || [], off = 0, dead = false;
+      function send() { if (dead) return; var rows = applyF(D[name](), f, name); o.onData({ rows: rows.slice(off, off + 500), totalRowCount: rows.length, rowOffset: off }); }
+      setTimeout(function () { o.onData({ rows: [{ labels: [{ kind: 'loading' }], values: [{ kind: 'loading' }] }], totalRowCount: 1 }); }, 10);
+      setTimeout(send, 200);
+      return { unsubscribe: function () { dead = true; }, updateDynamicFilters: function (nf) { f = nf; setTimeout(send, 100); }, updateScroll: function (s) { off = s.offset; setTimeout(send, 50); } };
+    },
+    editValue: function (sink, coords, v) { window.__writes.push([sink, coords, v]); return new Promise(function (res) { setTimeout(res, 300); }); }
+  };
+})();
+</script>
+<script src="spm_cockpit.js"></script>
+</body></html>
