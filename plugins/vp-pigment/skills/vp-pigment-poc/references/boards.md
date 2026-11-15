@@ -43,6 +43,18 @@ Pigment closes vertical gaps itself when a widget is deleted, so removing a widg
 - If a full-width grid still doesn't fit, shorten the **view value names** (`update_view_values` with `friendlyName`, for example "Cost carried" for "Cost carried (finance entity)") and explain the full meaning in the section line above the grid.
 - An input grid with many columns gets the full 12-wide row; put its linked chart and "how it's worked out" table directly underneath, side by side.
 
+### Fit the widget to the grid, not the grid to the widget
+
+Pigment does not stretch grid columns to fill the widget. A grid whose columns end halfway across its widget leaves a block of white space, while the chart beside it is squeezed and cuts off its labels (Benchmark board 03: grid 9 wide, content ended at about 1,100px of 1,820; chart 3 wide with clipped department names and bar labels).
+
+1. Size the columns first (the rules above).
+2. Measure how far the grid's content reaches: in the browser, take the right-most text element inside `[data-testid="board-widget-card-grid"]` and subtract the card's left edge. Scroll each card into view first, because grids below the fold don't render.
+3. Width in board columns = (content + about 56px for padding and scrollbar) ÷ one board column, rounded up. One board column = (board width + 16) ÷ 12: about 204px on Mike's 2560px display, about 115px on a 1440px laptop. Use the width of the screen the demo will run on; if a laptop must also work, a grid sized at 204px columns will scroll sideways there, so say so in the prep doc.
+4. Give every column you free up to the chart, KPI or text beside the grid. Typical results: 6/6 for a six-column input grid beside a bar chart, 4/8 for a one-column input list beside a chart, 5/7 for a four-column "how it's worked out" table beside a chart.
+5. Re-check on screen: the grid should end close to its widget's right edge, and the companion chart should show full axis labels.
+
+The same test applies to a grid alone on a full-width row: if its content ends well short of the board's width, that is white space too. Narrow it and put a chart or KPI beside it, rather than leaving it stretched.
+
 ### The width gotcha that wasted an hour
 
 On a view with metrics on columns, **`dataColumnsWidth` is ignored on boards**: every column renders at 100px whatever the view says. Always set **`perMetricColumnWidthOverrides` for every value field** (ids from `get_views` with `Values`), plus `rowHeaderColumnWidths` for each row pivot. Set `rowHeight` (Medium) at the same time.

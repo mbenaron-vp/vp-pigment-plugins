@@ -108,7 +108,7 @@ Deliberate overrides of Pigment's board guidance, for demo apps only:
    - widgets sized so nothing scrolls inside them
    - every column and row header readable, using per-column widths
    - no raw metric names on screen
-   - no big white space
+   - no big white space (and no grid widget wider than its columns: fit the widget to the grid, give the spare width to the chart beside it)
    - whole pounds at line level
    - checked in the browser
 5. **Navigation on every board:** Back, Home, step marker ("Step 3 of 7"), Next, Guide. Demos run with the side panel closed.
@@ -257,7 +257,7 @@ Read `references/boards.md` first. In short:
 - Build every board on the standard template: nav bar, KPI strip, input grid with its chart, how it's worked out, drill grid, footer.
 - Size widgets in rows of about 23px; set per-column widths on every grid.
 - Give prefixed metrics display names.
-- Fill white space with charts and KPIs.
+- Fill white space with charts and KPIs. Fit each grid widget to its columns and give the spare width to the chart beside it.
 - After saving drafts, repoint widgets.
 - Check every board in the browser.
 
