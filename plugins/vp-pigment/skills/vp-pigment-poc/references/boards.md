@@ -71,8 +71,15 @@ Then measure in the browser (`getBoundingClientRect` on a header cell, or a zoom
 ## Drafts, saving and repointing
 
 - Changing a view that you didn't create in the last hour makes a **draft** (the response says so). Others see the old view until it's saved. Collect the draft ids and ask Mike once for the batch, then `save_draft_views`.
-- **A saved draft of a view used on more than one board is promoted to a new view, and the widgets are NOT repointed** (`widgetUpdates` comes back empty). After every save, repoint each widget that showed the old view with `update_board_widgets`, using the new `savedViewId`. Check every board the view appeared on.
-- Use `set_widget_preview` when you want to see a draft on a board before saving; clear it afterwards.
+- **A saved draft of a view used on more than one board is promoted to a new view** (`action: PromotedToNewView`, a new `savedViewId`). A view used on exactly one board is merged back in place, and nothing needs repointing.
+- **Pigment only repoints widgets that had the draft previewed on them** (`set_widget_preview`). Those come back in `widgetUpdates` with `success: true`. Every other widget showing the old view stays on it, and `widgetUpdates` doesn't mention them.
+- So after every save that promotes a view:
+  1. List every board and widget that showed the old view id. Search your board JSON, or `get_board` on each board.
+  2. Repoint each one not in `widgetUpdates` with `update_board_widgets`, using the new `savedViewId`. Keep the widget's current position.
+  3. `get_board` each touched board and confirm the view id.
+- Before repointing, read the widget's current position with `get_board`; don't work it out from earlier layouts. Stored y values don't change when Pigment closes a visual gap, so a guessed y can overlap other widgets.
+- Use `set_widget_preview` to check a draft on a board before saving, then `clear_widget_preview` once saved. Previewing every widget that shows the view before saving also makes Pigment repoint them all for you.
+- Promoted views get a hash in their name ("Leaving and fixed-term ends - fa1c8f34"). Record the new view ids in `build-spec.md`. The old views stay in the app unused; tidy them after the demo, not before.
 
 ## Board widget updates
 
