@@ -72,6 +72,7 @@ These are the house standard. Read their actual code with `search_frames` (by `i
 | Trust Payments SPM boards and demo script | same app | boards SPM 0-4 | Part 1 explainer tables, colour scales, whole-pound merchant grids |
 | Benchmark Capital cost envelope | `8fa6e9c8-6474-416a-bfd5-883edf335ee2` | boards 00-06 | Board sizing and widths done properly; weekly versions; waterfall and bridge; approval impact |
 | FRP Budget Round | `f33d2027-5f81-4177-9612-06cc6df08e5a` | frame `49bebf31-4523-4cf5-ae69-8346c2425d2b` | Readable frame template: levers that write, monthly impact against baseline, commentary, submit/approve |
+| FRP 12-step story (redesign) | `f33d2027-5f81-4177-9612-06cc6df08e5a` | boards 02 Profit and Loss `77d09dd6-0f71-484c-93b4-caf5dae3722b`, 07 Capital Requests `70058bc6-8182-4081-81f2-b912151c7fbc`, 12 Workflow Tracker `06d5e6fe-c5b3-4765-9204-bd194e999cba` | Management P&L with running subtotals; overridable rate card; capex approve-and-depreciate; sign-off area on every board feeding a workflow tracker |
 | MAT Planning Cockpit (click to explain) | `804ef304-8e38-4dcd-94f6-92d94339ba9a` | frame `67d799be-9133-42f6-81c7-bdabcec1da51` | Click-to-explain panel, queued writes with a "recalculating" state, driver editor |
 | MAT demo home | `804ef304-8e38-4dcd-94f6-92d94339ba9a` | board `2cf6a4dc-6751-4cde-9327-049a5fda1250` | Home board: client logo, cockpit card, numbered story boxes, one card per board |
 
@@ -97,13 +98,13 @@ Load the specialist skill at the step that needs it:
 Deliberate overrides of Pigment's board guidance, for demo apps only:
 - Images are expected (client logo on Home).
 - Every board carries a navigation bar.
-- **No instruction boxes on boards.** The explanation lives in the demo script.
+- **No instruction boxes, subtitle lines or footer notes on boards.** The explanation lives in the demo script.
 
 ## Non-negotiables
 
 1. **One story, boards first.** It runs from the Home board through a logical sequence of native boards, into the demo script. Each board is one moment in the story and answers one client pain. **Frames are never the opener.** They come at the end as "if you want it presented differently, you can wrap the whole process in a frame". Every process shown in a frame must also exist as a board.
-2. **No grid-only boards.** Every input grid has a chart or KPI that moves when a value changes. Use colour: inputs highlighted, variances coloured, colour scales on attainment-type numbers.
-3. **No "What this shows / Try this / Watch" boxes on boards** (Mike, Nov 2026). A section header with one plain line under it is fine. The talk track, try-this and watch go in Part 2 of the demo script.
+2. **No grid-only boards, anywhere in the app.** Every board, including "under the bonnet" boards you might open, has a KPI strip and at least one chart, and every input grid has a chart or KPI that moves when a value changes. Use colour: inputs highlighted, variances coloured, colour scales on attainment-type numbers, compact rows (Small) on long grids.
+3. **No text on boards beyond titles** (Mike, Nov 2026). No "What this shows / Try this / Watch" boxes, **no italic subtitle line under a section header, and no footer notes** ("Illustrative data…", "AI note"). A section header is an H2 title only. The talk track, definitions and illustrative-data notes go in the demo script.
 4. **Boards look finished** (`references/boards.md`):
    - widgets sized so nothing scrolls inside them
    - every column and row header readable, using per-column widths
@@ -132,6 +133,19 @@ Deliberate overrides of Pigment's board guidance, for demo apps only:
     - Inside the last few hours before a call, don't ship anything that can't be tested against the live model.
     - Restore every input you change while testing, and re-read the baseline afterwards.
 15. **Say what hasn't been tested**, plainly, and when it will be.
+16. **Show the lift, don't replicate the Excel** (Mike, FRP, Nov 2026). A board per Excel tab, or an "old rate" and "new rate" column side by side, looks like the spreadsheet the client is trying to leave. Instead:
+    - **One metric, overridable.** A calculated input (rate = last year x uplift) is one metric with overrides enabled. Type over a cell to see the live change; clear it to go back to the formula.
+    - **Boards follow the story, not the tabs.** Rebuild the client's tabs as story boards (overview, P&L, people, rates, balance sheet items, overheads, capital, budget round, forecast, variance, multi-year). Move the tab-for-tab boards to an archive folder linked from Home as "Under the bonnet".
+    - **A P&L looks like a P&L:** report lines in order, subtotals (turnover, gross profit, EBITDA, net profit) as shaded rows, a waterfall beside it. Never an account-level dump as the main view. Pattern in `references/boards.md`.
+    - **Single-table screens need a story.** For example, capital requests become approve, then see the spend profile, the depreciation and the net profit impact move.
+17. **No scenario sections on boards.** Scenarios are native: they're shown from Pigment's scenario menu, not rebuilt as low/high input blocks on a board. If a downside is part of the story, create the native scenario (a UI step for Mike; the MCP can't create scenarios) and script it in Part 2.
+18. **Every POC has a workflow tracker and a sign-off area on every board** (Mike, Nov 2026). It must look good and work:
+    - a **Workflow Stage** list (one stage per story board) and a **Workflow Status** list (Not started, In progress, Returned, Submitted, Approved, each with a progress score)
+    - Status, Owner, Due date, Comment and Progress by stage x the client's entity (location, cost centre, BU)
+    - a **Sign-off** area at the bottom of every story board: the stage's row, round progress, and a button to the tracker
+    - a **Workflow tracker** board as the last step: progress KPI, count by status, colour-coded status heatmap, stacked bar by stage, progress by entity, and the full review-and-approve grid
+    - seeded data that tells a story (one entity ahead, one behind, one item returned with a comment that ties to the variance story)
+    Pattern in `references/boards.md`.
 
 ## Single source of truth: the story file
 
@@ -219,6 +233,7 @@ Before building, write `story.json` in the client folder. Every piece of explana
 | 4 | Side calculations board | The calculations they keep in side workbooks, rebuilt as visible drivers |
 | 5 | Versions and variance board | Current against previous, with commentary and audit trail |
 | 6 | Reporting board | Board pack, or the feed to their reporting tool |
+| 6a | Workflow tracker board (always) | Where every entity is on every stage; review and approve |
 | 7 | Process frame (optional, at the end) | The same process wrapped in one guided screen |
 | 8 | Reporting frame (optional, at the end) | A presentation-style board pack |
 
@@ -254,14 +269,15 @@ Before building, write `story.json` in the client folder. Every piece of explana
 ### Phase 4a - Boards (the VP look)
 
 Read `references/boards.md` first. In short:
-- Build every board on the standard template: nav bar, KPI strip, input grid with its chart, how it's worked out, drill grid, footer.
+- Build every board on the standard template: nav bar, H2 title, KPI strip, input grid with its chart, how it's worked out, drill grid, sign-off area. No subtitle lines, no footer.
+- **Configure every view completely before it goes on a board.** Once a view is on a board, later edits fork a draft (unless you created it in the last hour). To change an older view that's on a board, create a new view and swap the widget.
 - Size widgets in rows of about 23px; set per-column widths on every grid.
 - Give prefixed metrics display names.
 - Fill white space with charts and KPIs. Fit each grid widget to its columns and give the spare width to the chart beside it.
 - After saving drafts, repoint widgets.
 - Check every board in the browser.
 
-**Build boards from a generator.** Keep the widget JSON per board (or a small generator with `nav`, `header`, `card`, `view`, `footer`) in the client folder. Every board then has the same nav bar and footer, and a re-layout doesn't mean re-reading every board.
+**Build boards from a generator.** Keep the widget JSON per board (or a small generator with `nav`, `header`, `card`, `view`, `signoff`) in the client folder. Every board then has the same nav bar and sign-off area, and a re-layout doesn't mean re-reading every board.
 
 ### Phase 4b - Cockpit frame
 
@@ -357,7 +373,10 @@ Give Mike a short chat summary: the click path in one line per screen, what wasn
 - The run of show fits the slot, including Pigment 101 and the product tour
 - The story brief is confirmed and `story.json` is written
 - Home board, cockpit frame and every board follow `references/boards.md` and `references/frames.md`, checked in the browser
-- Every board has a nav bar, live KPI or chart beside its inputs, a "how it's worked out" table for its headline numbers and a drill path; no instruction boxes, no raw metric names, no cut-off headers, no scrolling widgets
+- Every board has a nav bar, a KPI strip, live KPI or chart beside its inputs, a "how it's worked out" table for its headline numbers, a drill path and a sign-off area; no instruction boxes, subtitle lines or footers, no raw metric names, no cut-off headers, no scrolling widgets
+- A workflow tracker board exists and every sign-off area feeds it; changing a status on a board moves the tracker (tested)
+- No board replicates an Excel tab or shows old and new values of the same input side by side; no scenario section on any board
+- Home has the client logo and a card for every board in the story
 - No orphan metrics or assumptions; every view saved and every widget pointing at the saved view; boards and frame open on the story's opening case
 - The frame has click-to-explain on every number and driver tile, a guided tour with Skip and Esc, write-back with reset, and is not private
 - Real data is reconciled against the named source file, illustrative data is labelled, and template leftovers are gone

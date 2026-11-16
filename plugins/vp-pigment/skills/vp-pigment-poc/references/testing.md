@@ -38,6 +38,8 @@ Report results as a short pass/fail table with the fixes made, and write it into
 13. **Saved, not drafted:** every view change saved, and every widget repointed after a save that promoted a view (boards.md).
 14. **Opening state:** each board and the frame open on the story's opening case through page defaults.
 15. **Template leftovers removed:** no template scenario names, no empty list items in selectors, no leftover demo controls.
+15a. **Workflow:** change one stage's status on a story board's sign-off area, re-read Stage Progress and Stage Count for that entity, confirm the tracker board moves, then put the status back. Also: an overridable input (type over a calculated value, then clear it) returns to the formula value.
+15b. **No text on boards beyond titles:** no subtitle lines, footers or instruction boxes; every board in the app has a KPI and a chart.
 16. **Visual check in the browser** (below).
 17. **Reset:** restore the "Demo baseline" snapshot (or the reset table) and confirm the KPIs match the reconciliation table.
 18. **Live state matches the script:** right before the call, check every headline number on screen against the demo script. Look for leftover inputs from rehearsal.
@@ -49,6 +51,7 @@ Use Claude in Chrome (Mike's own browser and Pigment login):
 - Wait 8-10 seconds for widgets to load, then screenshot. Scroll and screenshot again for long boards.
 - Mike's screen is 2560px wide and screenshots come back scaled. Check real sizes with JavaScript (`innerWidth`, header cell `getBoundingClientRect().width`) rather than guessing from the image.
 - If navigation is blocked by a "Leave site?" dialog after a draft preview, navigate with `force: true`; nothing on the server is lost.
+- **Screenshots can time out** on heavy boards ("Page.captureScreenshot timed out"), especially when the Chrome window isn't in front. Fall back to text: `document.querySelector('main').innerText`, and count `Nothing to display` to find empty widgets. Widgets render lazily, so a KPI read too early shows only its caption: wait and read again before calling it broken. Text checks don't prove the look: say which boards were only checked by text, and ask Mike to bring the Chrome window to the front for screenshots.
 - Look for:
   - scroll bars inside widgets
   - cut-off headers
