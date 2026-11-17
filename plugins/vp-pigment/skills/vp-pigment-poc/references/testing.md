@@ -39,6 +39,8 @@ Report results as a short pass/fail table with the fixes made, and write it into
 14. **Opening state:** each board and the frame open on the story's opening case through page defaults.
 15. **Template leftovers removed:** no template scenario names, no empty list items in selectors, no leftover demo controls.
 15a. **Workflow:** change one stage's status on a story board's sign-off area, re-read Stage Progress and Stage Count for that entity, confirm the tracker board moves, then put the status back. Also: an overridable input (type over a calculated value, then clear it) returns to the formula value.
+15c. **Planner test:** for each Excel input tab, do on its board what a budget holder does on the tab (type an input, phase a month, add a joiner, change a method) and check the board shows last year beside the budget. List anything the tab can do that the board can't.
+15d. **Roll-forward rehearsal:** move the switchover (for example "Actuals to" from Apr to Oct), check every month grid header flips to Actual for those months and the totals match a known figure, then reset and re-read the baseline. Check that no comparison metric double-counts the overlap between the Actual and Budget versions.
 15b. **No text on boards beyond titles:** no subtitle lines, footers or instruction boxes; every board in the app has a KPI and a chart.
 16. **Visual check in the browser** (below).
 17. **Reset:** restore the "Demo baseline" snapshot (or the reset table) and confirm the KPIs match the reconciliation table.

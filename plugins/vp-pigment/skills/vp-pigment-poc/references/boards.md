@@ -234,3 +234,67 @@ There is no MCP tool to create or delete native scenarios (only `list_scenarios`
 ## Make links visible
 
 If the model links two things (a backfill role to the leaver it replaces, a merchant to its rep), show the link on a board as a column. Otherwise the audience asks "is anyone replacing that person?" and the answer is hidden in a list property.
+
+## Input-tab boards: the client's layout on top, reporting below (FRP, Nov 2026)
+
+Each Excel input tab becomes one story board:
+
+1. **Top:**
+   - selectors for the split the workbook uses (entity, pillar, category)
+   - the input grid in the workbook's layout, inputs coloured like the client's input cells (`Yellow_10` data, `Yellow_30` header for FRP's yellow)
+2. **Middle:** the tab's calculated rows in the same order as the workbook (for example the work-done journey: gross, holidays, sick, stat holiday, study, non-chargeable, chargeable, inter-office, seasonality, total, utilisation, headcount).
+3. **Bottom:** the consolidated view (all pillars or entities), KPIs and charts that move when an input changes, then the sign-off area.
+
+### Data Type header (Actual / Budget / Forecast above the months)
+
+- **Mapping metric:** `Data Type`, Version × Month → Version Type, formula:
+
+  ```
+  IF(IsActual, ITEM("Actual", 'Version Type'.Name),
+  IF(IsPlan, IF('Version Switchover' > Version.'Switchover Month', ITEM("Forecast", 'Version Type'.Name), Version.'Version Type')))
+  ```
+
+- **Columns:** `Year` grouping, then a Joined pivot `{"kind":"Joined","dimensionId":<Version Type list>,"mappingMetricId":<Data Type>}`, then `Month`. `get_available_pivots` lists it once the mapping metric exists.
+- **Colour:** target the Joined pivot's members in `update_view_formatting` (Actual Grey_10, Budget Yellow_10, Forecast Teal_10).
+- **The metric needs Version.** Put Version on the page.
+
+### One budget version holds last year's actuals
+
+- **Window:** set the budget version's Start Month a year before the budget year, so IsActual covers last year and every grid shows actuals beside budget.
+- **Comparison metrics** that add the Actual and Budget versions then double-count the overlap. Filter them on a `Reported Timeline` flag (Version × Month): the budget version for its window, the Actual version only before it.
+
+### Overheads: planning method per line
+
+**Metrics:**
+
+| Metric | Shape | What it does |
+|---|---|---|
+| `Line Method` | Location × Account → method list | Formula default = the account's method, overrides on, so it's a drop-down per office |
+| `Line Uplift %` | Location × Account | Input |
+| `Run Rate Window` | Month boolean | The last three actual months up to the switchover |
+| `Line Method Amount` | Location × Account × Month | Nested IF on the method: annual / 12, last year's month × (1 + uplift), 3-month average, blank |
+| `Line Budget` | Version × Location × Account × Month, overrides on | `IF(IsActual, GL actual, IF(IsPlan, IF(budget year, IFBLANK(typed month, method amount))))`; feeds the P&L build |
+
+Typing over a month overrides it (phasing).
+
+**Board:**
+
+1. **Category page selector:** keeps each grid to 15-25 rows, no scroll.
+2. **Planning grid:** a table of last year, method, annual amount, uplift %, FY total and next-year total, with the method, annual and uplift columns in yellow. A category KPI and a last-year-against-budget bar sit beside it.
+3. **Monthly grid:** Line Budget with the Data Type header for last year and the budget year.
+
+The P&L board reuses `Line Budget` filtered to the workbook's P&L input lines (method = monthly input, not in an overhead group).
+
+### Multi-year comparison with % change
+
+- **No duplicate value field:** a metric view can't show the same metric twice (the second value field is dropped).
+- **Instead:** use two grids side by side, £ by year and the same metric with show-value-as `PercentGrowthFromAnItem` (Relative, offset -1, on the Year pivot).
+- **Consolidation:** this works at any level, so a multi-select entity page gives a consolidated comparison.
+
+### Native-scenario roll-forward board
+
+- **Grid:** P&L lines × the Scenario pivot (`{"kind":"Scenario"}` on columns; a Scenario page is added automatically).
+- **Chart:** net profit by month with Scenario on rows.
+- **Input:** the "Actuals to" input on the same board.
+- **Board page:** set the Scenario page to multi-select with Base as the default.
+- **Live demo:** the presenter creates the scenario from Base, ticks it in the page, and sets "Actuals to" in it.
