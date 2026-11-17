@@ -4,13 +4,23 @@ Read this before creating or changing any board or view. Every rule here comes f
 
 ## Mike's standing feedback (Benchmark Capital and Trust Payments, Nov 2026)
 
-1. **No "What this shows / Try this / Watch" boxes on boards.** They look like scaffolding. That text is the presenter's voice-over and lives in the demo script. A section header with one plain italic line under it is fine.
+1. **No "What this shows / Try this / Watch" boxes on boards.** They look like scaffolding. That text is the presenter's voice-over and lives in the demo script. **Section headers are an H2 title only: no italic line under them and no footer note** (FRP, Nov 2026, superseding the earlier "one plain line is fine").
 2. **Every grid shows full names.** Column headers, row headers and metric names must never be cut off ("Committed…", "Headroom if…").
 3. **No scroll bars inside widgets and no big white space.** Size widgets so grids and text don't scroll; a narrow grid gets a chart or KPI beside it.
 4. **No raw metric names on screen** (`CE_What changed`, `IN_Stage`). See "Metric names" below.
 5. **Colour in grids:** amber inputs, colour scales on attainment-type numbers, coloured variance columns.
 6. **Whole pounds at line level** (£1,768), never £0k or £0.1k. Use £k only for totals in the millions.
 7. **Every POC gets a cockpit frame** without being asked (see frames.md), placed last in the story.
+
+## Mike's FRP feedback (Nov 2026): what made the first FRP build "unappealing"
+
+8. **The P&L didn't look like a P&L:** account-level rows, wide, no colour, no subtotals. Use the management P&L pattern below.
+9. **It copied the Excel:** one board per tab, and an "old rate / new rate" pair of columns. Use one overridable metric and story boards (SKILL.md non-negotiable 16).
+10. **A scenario section on a board** duplicated what Pigment's native scenarios do. Don't build one.
+11. **Boards outside the demo path were bare grids.** Every board in the app gets a KPI strip and charts, or goes into an archive folder.
+12. **Home had no logo, mis-sized boxes and no link to every board.** See "The Home board".
+13. **A single-table board (CapEx) has no story.** Give it an action and a consequence: approve, then watch spend, depreciation and net profit move.
+14. **The workflow was tepid.** Every POC gets a sign-off area on each board and a workflow tracker board. See the pattern below.
 
 Always check the result in the browser before calling a board done (see testing.md).
 
@@ -24,15 +34,17 @@ Heights that read well (rows):
 | Widget | Height |
 |---|---|
 | Nav bar (Back, Home, step marker, Next, Guide) | 3 |
-| Section header: H2 title + one italic line | 4 |
-| KPI strip (one KPI widget, several metrics) | 6-7 |
-| Home: client logo and title banner | 8 |
-| Home: board cards (ActionButton, Card layout) | 10 |
-| Chart | 22-25 |
-| Grid, about 10-12 rows visible | 24-30 |
-| Grid, long input list | 30-36 |
-| Text box (Box layout) with 2-3 short paragraphs | 8-10 |
-| Footer ("Illustrative data…" line) | 3 |
+| Section header: H2 title only | 2 |
+| KPI strip (one KPI widget, several metrics) | 6 |
+| Home: client logo (w2) beside the title banner (w8) and Guide (w2) | 4 |
+| Home: board cards (ActionButton, Card layout), six per row at w2 | 7 |
+| Chart | 13-15 (FRP); 22-25 if it is the board's main visual |
+| Grid, management P&L of about 25 lines, Small rows | 30 |
+| Grid, about 10-12 rows visible | 15-24 |
+| Grid, long input list | 28-36 |
+| Sign-off area: header 2, then panel (w9) beside progress KPI and tracker button (w3) | 2 + 5 |
+
+These heights are in board rows as stored by the MCP. FRP boards rendered well with them on Mike's screen; check on screen anyway.
 
 Pigment closes vertical gaps itself when a widget is deleted, so removing a widget doesn't need a re-layout.
 
@@ -82,7 +94,10 @@ Then measure in the browser (`getBoundingClientRect` on a header cell, or a zoom
 
 ## Drafts, saving and repointing
 
+- **Configure a view completely before you put it on a board**: values and names, widths, filters (hide empty rows and columns), formatting, chart or KPI settings, aggregations. Once it's on a board, later edits can fork a draft.
 - Changing a view that you didn't create in the last hour makes a **draft** (the response says so). Others see the old view until it's saved. Collect the draft ids and ask Mike once for the batch, then `save_draft_views`.
+- **To change an older view that is on a board without a draft:** create a new view with the same pivots, configure it, and point the widget at it (`update_board_widgets` with the widget's id). Delete or ignore the old view. Faster and safer than a draft-save-repoint cycle.
+- **To fix a raw label without touching the view:** set the metric's en-US display name (`bulk_update_metrics`). It changes the label everywhere and forks nothing.
 - **A saved draft of a view used on more than one board is promoted to a new view** (`action: PromotedToNewView`, a new `savedViewId`). A view used on exactly one board is merged back in place, and nothing needs repointing.
 - **Pigment only repoints widgets that had the draft previewed on them** (`set_widget_preview`). Those come back in `widgetUpdates` with `success: true`. Every other widget showing the old view stays on it, and `widgetUpdates` doesn't mention them.
 - So after every save that promotes a view:
@@ -103,24 +118,77 @@ Then measure in the browser (`getBoundingClientRect` on a header cell, or a zoom
 | Row | Contents | Height |
 |---|---|---|
 | Nav bar | Back x0 w2, Home x2 w2, navy step marker x4 w4 ("Step 2 of 6 - Weekly movements"), Next x8 w2, Guide x10 w2 | 3 |
+| Title | H2 text only | 2 |
 | KPI strip | One KPI widget with the board's headline numbers | 6 |
-| Main section | Input grid (amber) with the chart that moves when it changes, side by side, or the grid full width with the chart underneath | 22-36 |
-| How it's worked out | Section header, then a table with the parts in formula order | 4 + 24 |
+| Main section | Input grid (amber) with the chart that moves when it changes, side by side, or the grid full width with the chart underneath | 13-36 |
+| How it's worked out | H2 header, then a table with the parts in formula order | 2 + 15-24 |
 | Detail | Drill grid down to the people, roles or rows | 24-30 |
-| Footer | "Illustrative data. …" | 3 |
+| Sign-off | H2 "Sign-off" box (Indigo_10 background), sign-off panel w9 h5, round progress KPI w3 h3, "Open workflow tracker" button w3 h2 (Green_80) | 2 + 5 |
 
-- Back on step 1 goes to Home. The last board's Next can open the cockpit frame.
+- No footer. Illustrative-data notes go in the demo script's known gaps.
+- Back on step 1 goes to Home. The last board (the workflow tracker) has Finish, which goes to Home.
 - Home uses `NavigateToBoard` to the Home board (`BackToHomepage` fails through the MCP). The frame opens with `OpenStaticLink` to `https://pigment.app/w/vantagepoint/application/{appId}/frames/{frameId}` (`NavigateToFrame` is rejected by the MCP).
 - A board page selector only filters views that carry that dimension in Pages. Add the page to the view even when the dimension is on rows.
 - Set each board's page defaults to the story's opening case.
+- **Grouping pages merge into the dimension's selector.** A view paged by Employee > Location or Month > Year shows up as the board's Location or Year selector, so one selector drives views paged by the dimension and by the grouping.
+- **A Month > Year grouping page adds a Year selector defaulting to All.** Set the board's Year default (FY 26 or the story year) in the same pass, or charts plot every month of every year.
+- **Pin a view to one item with a hidden page:** give the view a page on the dimension, then set that board page to `pageDisplayMode: Hide` with a default. This is how one sign-off view shows a different stage on every board.
+- `update_board_page_configurations` rejects a page no view on the board exposes. After removing widgets, re-read the board's pages before setting defaults.
+- A single-select Version selector can still default to two items (`singleModality: false`, Actual + Budget) for a multi-year view, when the versions don't overlap in time.
 
 ## The Home board
 
-Logo (Image widget, Fit, alt text, client's own site) beside a navy title box with one paragraph on what the app is for. Then:
-- "The weekly review in N steps" header and one card per board in demo order (Card layout, title "1  Cost envelope" and a one-line question it answers).
-- "This week at a glance" header and the main KPI strip.
-- "If you want it presented differently" header, the cockpit card (Blue_80) and a short "how to read this app" box defining the one core concept.
-- Footer with the illustrative-data note.
+Logo (Image widget, Fit, white background, alt text, from the client's own site: find it with `document.querySelectorAll('img')` on their home page) at x0 w2 h4, the navy title box at x2 w8 h4, and Guide at x10 w2 h4. Then:
+- "At a glance" H2 and the main KPI strip, then a league table and chart by entity.
+- "The round in N steps" H2 and **one card for every board** in demo order, six per row at w2 h7 (Card layout, title "1  Overview" and a one-line description). Colour the cards by act (for example blue for the model, teal for the planning round, green for the tracker).
+- "Round status" H2: round progress KPI, sign-offs by status KPI, progress by entity chart.
+- An "Under the bonnet" card for the archive folder, and the cockpit frame card last.
+- No subtitle paragraph and no footer.
+
+## The management P&L pattern
+
+Build this whenever the client has a P&L. An account-level grid is not a P&L.
+
+1. **Report-line list** (`PL Line`): every line of the client's management P&L in order, with a Sort and an `Is Subtotal` boolean. Subtotals: Total turnover, Gross profit, EBITDA, Net profit (use the client's names).
+2. **Map accounts to lines**: a dimension property on the account (or on an intermediate comparison line).
+3. **One report metric** by PL Line x Version x Entity x Month:
+   ```
+   IF('PL Line'.'Is Subtotal',
+     CUMULATE(<PL>[BY SUM: Account.'PL Line'], 'PL Line'),
+     <PL>[BY SUM: Account.'PL Line'])
+   ```
+   With income positive and costs negative, the running total down the list gives every subtotal.
+4. **Views:**
+   - Monthly P&L: PL Line rows, Month columns, Small rows, row header about 230px, months about 112px, empty rows hidden. Subtotal rows Blue_20 and bold; the bottom line (net profit) Indigo_100 with white text, area Both.
+   - Budget against forecast: Version columns filtered to the two versions, plus a calculated item (forecast minus budget) coloured red below 0 and green above.
+   - KPI strip filtered to the four subtotals.
+   - Waterfall (Contribution) with the subtotals filtered out, so each bar is one line.
+   - By year: a Month > Year grouping on columns for the multi-year board.
+
+## The workflow tracker and sign-off pattern
+
+Standard in every POC (SKILL.md non-negotiable 18).
+
+**Model** (own block folder, for example "09. Workflow"):
+- List **Workflow Status** with a Progress number property: Not started 0, In progress 0.35, Returned 0.35, Submitted 0.75, Approved 1.
+- List **Workflow Stage**: one item per story board, in story order.
+- Metrics by Stage x Entity: **Stage Status** (dimension type, Workflow Status), Stage Owner (text), Stage Due Date (date), Stage Comment (text), **Stage Progress** = `'Stage Status'.'Progress'` with Avg aggregators, **Stage Count** by Stage x Entity x Workflow Status = `IF('Stage Status' = 'Workflow Status', 1)`.
+- A table with Status, Owner, Due, Comment, Progress.
+- Seed it so it tells a story: one entity ahead, one behind, one stage Returned with a comment that points at the variance story.
+
+**Views** (configure fully before placing):
+- **Sign-off panel**: Stage rows; pages Stage and Entity; Large rows; widths about 210 / 150 / 260 / 120 / 560 / 110; status colours (below); progress colour scale Red_20 → Yellow_30 → Green_50.
+- **Round progress KPI**: Stage Progress, Avg on hidden dimensions.
+- **Sign-offs by status KPI**: Stage Count, Workflow Status on columns.
+- **Status heatmap**: Entity rows x Stage columns, status colours, about 112px per stage so all stages fit without scrolling.
+- **Stacked bar** by stage and status (series coloured per status); **progress by entity** horizontal bar.
+- **Workflow detail**: Entity and Stage rows, every field, for review and approve.
+
+**Status colours** (conditional formatting, Text condition): Approved Green_50 / White; Submitted Blue_80 / White; In progress Yellow_30 / Orange_100; Returned Red_50 / White; Not started Grey_10 / Grey_80.
+
+**On every story board:** the sign-off area at the bottom (see the standard board), with the board's hidden Stage page defaulting to its own stage.
+
+**Test it:** change one status on a board, re-read the entity's progress and the status counts, then put it back.
 
 ## Colour (Organization_Custom slots if the VP palette is loaded; otherwise the fallback)
 
@@ -136,13 +204,32 @@ Logo (Image widget, Fit, alt text, client's own site) beside a navy title box wi
 | Text | Jake Graphite #181818 | Grey_100 |
 | Second series | John Violet #96A0FF / Anton Slate #2D4E71 | Violet_50 / Grey_80 |
 
-Conditional formatting with `mcpBooleanCondition` fails with a `varOperator` error; use static formatting or colour scales.
+### Conditional formatting works if the condition is flattened
+
+`update_view_formatting` rejects the documented nested shape (`condition.mcpNumberComparisonCondition`), first asking for `kind` and then for `varOperator`. Put the fields directly on `condition` and give both `varOperator` and `operator`:
+
+```
+"condition": {"kind": "NumberComparison", "varOperator": "LessThan", "operator": "LessThan", "value": 0}
+"condition": {"kind": "Text", "varOperator": "EqualTo", "operator": "EqualTo", "text": "Approved"}
+"condition": {"kind": "ColorScale", "minValue": 0, "midValue": 0.5, "maxValue": 1,
+              "minColor": "Red_20", "midColor": "Yellow_30", "maxColor": "Green_50", "applyTo": "Background"}
+```
+
+Target a calculated item (a variance column) with its pivot id and the calculated item's id as the Modality. Overrides replace the view's formatting wholesale, so resend any you want to keep.
 
 ## Charts
 
 - A chart where the series differ by a few percent on an axis from zero looks flat and meaningless (the Benchmark "run rate against the P&L" chart). Chart the difference instead, or start the axis near the data, or say in the section line what the gap means.
 - KPI views: no rows, `metricsLocation` Columns. Waterfall Contribution: every dimension in rows.
 - Remove a version from a board's page selector when a view makes no sense for it (Budget has no previous round).
+- KPI views over a snapshot metric (headcount) need a hidden-dimension aggregation of Avg (or Last) on time, or they add twelve months together.
+- A balance (closing WIP) on a grid with a month total needs a LastNonBlank aggregation on the month pivot for that value.
+- A chart on a dimension whose display property is a code (grade "9") shows codes on the axis: set the pivot's `customDisplayProperty` (for example "Job Title").
+- An input grid whose input columns are empty at baseline (an Approve tick box) needs `showEmptyColumns: true`, or the columns the presenter has to click are hidden.
+
+## Scenarios
+
+There is no MCP tool to create or delete native scenarios (only `list_scenarios`). Template leftovers ("Oil Crash", "P90") and the downside scenario the story needs are a UI step for Mike: put them in the morning-of checklist. Never build a low/high scenario section on a board instead.
 
 ## Make links visible
 
