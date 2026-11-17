@@ -141,3 +141,7 @@ Mike's verdict on a frame where only the KPI tiles opened an explanation: "none 
 - **First month header stuck and left-aligned when scrolling right.** `th:first-child` also matches the first month cell of the second header row. Put the sticky-left rule on an explicit class (`th.c0`), and give the second header row `top` equal to the first row's height.
 - **Clicks lost.** A re-render between pointer down and up replaces the button under the cursor. Set a flag on `pointerdown`, skip renders while it is set, and render once on `pointerup`.
 - **Read-only cells look like text.** Give drillable cells `cursor:pointer` and a hover outline so it is obvious they open something.
+- **CSS class collisions break tables.** A month-header `th` shared the class `mh` with the pop-up header (`display:flex`), so every month heading stacked vertically and the grids collapsed. Prefix classes per component, and screenshot every step in the harness, not only check for errors.
+- **One scroll per page.** A scrolling `main` plus grids with their own `max-height` traps the mouse wheel. Let the page scroll, keep the header and step list `position:sticky`, and let grids scroll sideways only.
+- **Charts:** round axis ticks (1, 2, 2.5, 5 × 10ⁿ), month labels with the year when a chart spans more than a year, and the last label right-aligned so it isn't clipped. Show money inputs with thousand separators.
+- **Check the published view, not only the editor.** The editor narrows the frame; Mike sees it full width.
