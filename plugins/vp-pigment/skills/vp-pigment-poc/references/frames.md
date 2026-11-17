@@ -13,10 +13,11 @@ Start from a reference and copy its structure; don't reinvent it:
 - **At most 10 active data-source subscriptions per frame.** The 11th fails with "Too many active subscriptions for this resource". Plan the sources before building:
   - unsubscribe lookup sources once loaded
   - compute small aggregates in JS from a source you already have instead of subscribing to another
+  - for a frame with many screens (FRP cockpit: 35 sources, 13 screens), keep a few global sources, and subscribe each screen's sources only while that screen is open: unsubscribe them when the step changes
 - **A data source cannot mix value types.** A text or dimension list property and numeric metrics need separate sources.
 - **`update_frame` replaces the frame wholesale** and needs the full body, so changing data sources or bindings costs a full resend. `update_frame_body` find-and-replace is cheap for code-only fixes. Get the data sources right first time.
 - **The frame's browser storage appears blocked inside Pigment**, so the localStorage "tour seen" check treats the tour as seen and it doesn't auto-start. The Guide button works; tell the presenter to use it.
-- Frames are created **private** and the MCP has no field to change it. Mike must untick private in Pigment before anyone else opens it.
+- Frames are created **private** and the MCP has no field to change it. Mike must untick private in Pigment before anyone else opens it. **`update_frame` (full replace) sets the frame back to private and starts a new draft**, even after Mike has published and unticked it: tell him to publish and untick again. `update_frame_body` also starts a draft but keeps the private setting.
 - Pigment asks the user for **permission the first time a frame writes**. Claude can't approve it, so frame writes are only proven once a person has clicked through. The presenter should choose "For this session" at the first Apply; otherwise it asks again for every cell.
 
 ## Lifecycle and safety
@@ -98,7 +99,8 @@ The explain text should match Part 1 of the demo script; both come from `story.j
 ## Delivering through the MCP
 
 - Keep readable source in the client folder (`specs/<client>/frames/<name>.js`) with its config JSON. The source is the master copy; the frame in Pigment is a deployment.
-- The body is sent in full as a tool argument, so size is tokens: two 50 KB frames cost about 50k output tokens. Minify only if it's large and the machine has a minifier.
+- The body is sent in full as a tool argument, so size is tokens: two 50 KB frames cost about 50k output tokens. Don't minify: Pigment's safe-code rules forbid minified frame code.
+- **A body over about 20 KB:** create the frame with unique placeholder lines (`//P1`, `//P2`, ...), then replace each with `update_frame_body` in chunks under 20,000 characters, split on line boundaries. Compare the returned `bodySizeBytes` with the local file's byte size to confirm nothing was lost.
 - After `create_frame`, read it back with `search_frames` and compare it with the local file. Small fixes go through `update_frame_body` find-and-replace; mirror them in the local file.
 
 ## Testing a frame locally (no Node or Python needed)
@@ -115,3 +117,27 @@ Mike's machine has no Node or Python, so test with plain HTML and PowerShell:
    - writes appear in `window.__writes`
    - Reset writes the originals back
 4. Then test on the live model: each lever writes, the data source changes, Reset restores the baseline.
+   - Until Mike publishes, the frame's normal URL shows only "You are viewing a draft". Open `.../frames/<id>/edit` in a **new** Chrome tab: an older background tab's renderer freezes and screenshots time out.
+   - The first click just after the frame loads is sometimes ignored; click again.
+
+Where Python is available (`py -3.12` on Mike's machine since Nov 2026), a script can build one self-contained harness HTML (config JSON, mock SDK and the frame body inlined) that runs from `file://` in the browser pane and can be driven with JavaScript: click every step, check `window.__errors`, fire a write, Reset, and a refused write.
+
+
+## Drill everywhere (Mike, FRP 17 Nov 2026)
+
+Mike's verdict on a frame where only the KPI tiles opened an explanation: "none of it's drillable... the charts are not an improvement over the Pigment charts". The house standard is now:
+
+- **Every number on screen opens its explanation**: grid cells, year totals, row names, mini KPI tiles, chart bars and points. Build it once, generically:
+  - a per-render registry: `dx(obj)` stores `{ t, v, what, f, parts, series, step, where }` under an id and the cell gets `data-dx`; one click handler opens the drawer from the registry. Reset the registry at the start of each render.
+  - month grids: give each row an `x` spec `{ f: 'formula in words', parts: [[label, getter(month), fmt, drill, kind]] }`; the cell drawer shows the parts for that month (or summed for the year, first/last month for opening/closing rows) and a mini bar chart of the row with the clicked month highlighted.
+  - parts can carry their own drill object, so the drawer drills down a level with a Back stack (P&L subtotal → its lines → one line by month).
+  - person rows: the drawer shows the person's calculation chain (hours → available → chargeable → rate → work done; salary → pension → NI → cost).
+- **Charts are interactive**: a hover tooltip (one fixed div moved on mousemove over `[data-tip]`), click a bar or point to drill, and an **Expand** button on every chart card that opens it full width in a modal.
+- **Sign-off is a button, not a drop-down**: "Sign off this step" opens a pop-up with the status and a note on what was done, writing the status and a stage comment metric (Workflow Stage × Location, text). Show the last note on the sign-off bar.
+- **Leave pure input screens to the boards.** Mike dropped the frame's "Input sheet and rates" step: settings tables add nothing in a frame. The frame steps should be where a change visibly moves something.
+
+## Frame bugs Mike found (fix before shipping)
+
+- **First month header stuck and left-aligned when scrolling right.** `th:first-child` also matches the first month cell of the second header row. Put the sticky-left rule on an explicit class (`th.c0`), and give the second header row `top` equal to the first row's height.
+- **Clicks lost.** A re-render between pointer down and up replaces the button under the cursor. Set a flag on `pointerdown`, skip renders while it is set, and render once on `pointerup`.
+- **Read-only cells look like text.** Give drillable cells `cursor:pointer` and a hover outline so it is obvious they open something.

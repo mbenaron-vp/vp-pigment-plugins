@@ -104,7 +104,7 @@ Deliberate overrides of Pigment's board guidance, for demo apps only:
 
 1. **One story, boards first.** It runs from the Home board through a logical sequence of native boards, into the demo script. Each board is one moment in the story and answers one client pain. **Frames are never the opener.** They come at the end as "if you want it presented differently, you can wrap the whole process in a frame". Every process shown in a frame must also exist as a board.
 2. **No grid-only boards, anywhere in the app.** Every board, including "under the bonnet" boards you might open, has a KPI strip and at least one chart, and every input grid has a chart or KPI that moves when a value changes. Use colour: inputs highlighted, variances coloured, colour scales on attainment-type numbers, compact rows (Small) on long grids.
-3. **No text on boards beyond titles** (Mike, Nov 2026). No "What this shows / Try this / Watch" boxes, **no italic subtitle line under a section header, and no footer notes** ("Illustrative data…", "AI note"). A section header is an H2 title only. The talk track, definitions and illustrative-data notes go in the demo script.
+3. **No text on boards beyond titles** (Mike, Nov 2026). No "What this shows / Try this / Watch" boxes, **no italic subtitle line under a section header, and no footer notes** ("Illustrative data…", "AI note"). A section header is an H2 title only. The talk track, definitions and illustrative-data notes go in the demo script. **One exception (Mike, FRP 17 Nov 2026): every board carries one plain "what to do here" line on the same row as the board title, to its right** (for example "Enter the office settings, the FY27 % increases and the monthly leave weightings, then check the rate card"). It tells the person arriving what they need to do; it is not a description of the board.
 4. **Boards look finished** (`references/boards.md`):
    - widgets sized so nothing scrolls inside them
    - every column and row header readable, using per-column widths
@@ -133,11 +133,21 @@ Deliberate overrides of Pigment's board guidance, for demo apps only:
     - Inside the last few hours before a call, don't ship anything that can't be tested against the live model.
     - Restore every input you change while testing, and re-read the baseline afterwards.
 15. **Say what hasn't been tested**, plainly, and when it will be.
-16. **Show the lift, don't replicate the Excel** (Mike, FRP, Nov 2026). A board per Excel tab, or an "old rate" and "new rate" column side by side, looks like the spreadsheet the client is trying to leave. Instead:
-    - **One metric, overridable.** A calculated input (rate = last year x uplift) is one metric with overrides enabled. Type over a cell to see the live change; clear it to go back to the formula.
-    - **Boards follow the story, not the tabs.** Rebuild the client's tabs as story boards (overview, P&L, people, rates, balance sheet items, overheads, capital, budget round, forecast, variance, multi-year). Move the tab-for-tab boards to an archive folder linked from Home as "Under the bonnet".
-    - **A P&L looks like a P&L:** report lines in order, subtotals (turnover, gross profit, EBITDA, net profit) as shaded rows, a waterfall beside it. Never an account-level dump as the main view. Pattern in `references/boards.md`.
+16. **Rebuild the planner's journey; drop Excel's mechanics** (Mike, FRP, Nov 2026; corrected after the client run-through). Two failures to avoid:
+    - **Too close to Excel:** an "old rate" and "new rate" column side by side, "New joiner" placeholder rows, hard-coded cells. Instead: one overridable metric (type over a calculated cell; clear it to go back to the formula), new joiners added as list items from the board.
+    - **Too far from Excel** (the bigger miss): boards that jump straight to KPIs and summaries. The planner can no longer see the yellow input cells, last year beside this year, every staff column or the work-done journey. Then the story can't be told, because the audience never sees how the numbers are built.
+
+    The rule: **each Excel input tab becomes a story board with the input area on top, in the client's layout** (same rows, same columns, every column visible and ungrouped, inputs coloured like the client's input cells, last year's actuals beside the budget months), and the reporting below it (consolidated table, KPIs, charts that move when an input changes). Split views (pillar, entity) sit on top with the consolidated view underneath, as the workbook does.
+    - **A P&L looks like a P&L:** report lines in order, subtotals (turnover, gross profit, EBITDA, net profit) as shaded rows, a waterfall beside it. The workbook's P&L input lines (bonuses, temporary staff and so on) are an input grid on the same board.
+    - **Overheads get a planning method per line** (drop-down: spread an annual amount, last year plus %, run rate, monthly input, calculated), with any month typed over to phase it. Pattern in `references/boards.md`.
     - **Single-table screens need a story.** For example, capital requests become approve, then see the spend profile, the depreciation and the net profit impact move.
+    - **Every board passes the planner test:** can a budget holder do on this board everything they do on that tab today?
+16a. **Versions and actuals from day one.**
+    - One budget version holds last year's actuals plus the budget years (a window that starts a year before the budget year), so every input board shows actuals beside budget.
+    - Every month column carries a **Data Type header** (Actual / Budget / Forecast) from a mapping metric (Version × Month → Version Type), used as a Joined pivot (Year > Data Type > Month), not as a dimension on the metrics.
+    - The switchover lives in a **scalar input metric** ("Actuals to") that IsActual / IsPlan read. Rolling forward (for example a 6+6) is then a native scenario copied from Base with "Actuals to" moved on, and every board updates. Test it before the demo: set the switchover forward, check the totals against a known figure, then reset.
+    - Don't model a forecast as a separate version unless the client works that way. Ask how they roll forward.
+16b. **Don't add screens the client didn't ask for** (the FRP five-year view). Check every board against the brief, the call notes and the workbook. Spend the time on what they did raise (FRP: central recharge allocation, consolidation with a key-movements waterfall, access rights).
 17. **No scenario sections on boards.** Scenarios are native: they're shown from Pigment's scenario menu, not rebuilt as low/high input blocks on a board. If a downside is part of the story, create the native scenario (a UI step for Mike; the MCP can't create scenarios) and script it in Part 2.
 18. **Every POC has a workflow tracker and a sign-off area on every board** (Mike, Nov 2026). It must look good and work:
     - a **Workflow Stage** list (one stage per story board) and a **Workflow Status** list (Not started, In progress, Returned, Submitted, Approved, each with a progress score)
@@ -198,6 +208,14 @@ Before building, write `story.json` in the client folder. Every piece of explana
 ### Phase 1 - Read the client's files properly
 
 - **Read the whole file.** The SharePoint connector truncates large workbooks, typically after about 50 rows. Get the actual files and parse them with `openpyxl` where Python is available.
+- **Inventory every input cell and every column, tab by tab, before designing a board.**
+  - Find the input cells by their fill colour (FRP: yellow `FFFFFF99`) and count them per tab.
+  - List every column header row, including hidden and grouped columns.
+  - Note which tabs split by entity or pillar and which consolidate.
+  - Note which tabs show last year's actuals beside the budget.
+  - Write the result as a table in the build spec (tab, what the planner does there, input cells). The board plan is built from this table.
+  - A dump script (`openpyxl`, values plus formulas plus an `[I]` marker on input fills) makes this quick.
+- **Ask, or check the call, for how they roll forward** (version per forecast, or the budget moved on with actuals).
 - **Map how the workbook works:** inputs → calculations → summaries → exports; version and plan-tier mechanics; time grain and horizon; master lists.
 - **Map each Excel construct to a Pigment object.**
 - **Pull out real totals** to use as reconciliation targets.
@@ -375,7 +393,9 @@ Give Mike a short chat summary: the click path in one line per screen, what wasn
 - Home board, cockpit frame and every board follow `references/boards.md` and `references/frames.md`, checked in the browser
 - Every board has a nav bar, a KPI strip, live KPI or chart beside its inputs, a "how it's worked out" table for its headline numbers, a drill path and a sign-off area; no instruction boxes, subtitle lines or footers, no raw metric names, no cut-off headers, no scrolling widgets
 - A workflow tracker board exists and every sign-off area feeds it; changing a status on a board moves the tracker (tested)
-- No board replicates an Excel tab or shows old and new values of the same input side by side; no scenario section on any board
+- Every Excel input tab has a story board with its inputs on top in the client's layout (every column, inputs coloured, actuals beside budget) and reporting below; no old/new columns of the same input; no placeholder rows; no scenario section on any board
+- Every month grid shows the Data Type header (Actual / Budget / Forecast); the roll-forward has been rehearsed (switchover moved, totals checked, reset)
+- No board the client didn't ask for
 - Home has the client logo and a card for every board in the story
 - No orphan metrics or assumptions; every view saved and every widget pointing at the saved view; boards and frame open on the story's opening case
 - The frame has click-to-explain on every number and driver tile, a guided tour with Skip and Esc, write-back with reset, and is not private
