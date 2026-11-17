@@ -4,7 +4,7 @@ Read this before creating or changing any board or view. Every rule here comes f
 
 ## Mike's standing feedback (Benchmark Capital and Trust Payments, Nov 2026)
 
-1. **No "What this shows / Try this / Watch" boxes on boards.** They look like scaffolding. That text is the presenter's voice-over and lives in the demo script. **Section headers are an H2 title only: no italic line under them and no footer note** (FRP, Nov 2026, superseding the earlier "one plain line is fine").
+1. **No "What this shows / Try this / Watch" boxes on boards.** They look like scaffolding. That text is the presenter's voice-over and lives in the demo script. **Section headers are an H2 title only: no italic line under them and no footer note** (FRP, Nov 2026, superseding the earlier "one plain line is fine"). Exception: the one "what to do here" line beside the board title (see "FRP round 2" below).
 2. **Every grid shows full names.** Column headers, row headers and metric names must never be cut off ("Committed…", "Headroom if…").
 3. **No scroll bars inside widgets and no big white space.** Size widgets so grids and text don't scroll; a narrow grid gets a chart or KPI beside it.
 4. **No raw metric names on screen** (`CE_What changed`, `IN_Stage`). See "Metric names" below.
@@ -298,3 +298,15 @@ The P&L board reuses `Line Budget` filtered to the workbook's P&L input lines (m
 - **Input:** the "Actuals to" input on the same board.
 - **Board page:** set the Scenario page to multi-select with Base as the default.
 - **Live demo:** the presenter creates the scenario from Base, ticks it in the page, and sets "Actuals to" in it.
+
+
+## FRP round 2 (Mike, 17 Nov 2026): what he asked for once the story was right
+
+- **"What to do here" line beside every board title.** Plain text on the title row, to the right: what the person arriving needs to do (enter, check, approve). Narrow the title widget to make room. Keep it to one line at 1536px.
+- **Neutral KPI tiles on every board.** No rainbow of KPI colours. House default: KPI view formatting with one override, empty `pathElements`, `area: Both`, `backgroundColor: Indigo_10`, `textColor: Indigo_100` (pale indigo, navy text; matches an Indigo nav bar). The colour lives on the view, so build a new view with the style and repoint the widget rather than editing a view already on a board (that forks a draft).
+- **Average utilisation (or the board's key ratio) as a KPI tile** beside the headline tiles, not only as a yellow total in the grid.
+- **Budget holder commentary as a card on the board it belongs to** (WIP and cash on the WIP board, overheads on the overheads board, direct costs on staff). Keep the consolidated narrative board as well. One editable view per card, filtered to its section, following the board's Location page.
+- **No white space next to input grids.** Under an input grid and beside a small settings table, add a chart that moves with the inputs (for example closing WIP by month stacked by pillar).
+- **Home story tiles at 4 per row** (w3) with short descriptions, so they still fit on a smaller screen than the one you built on. Check Home at 1536px and at Mike's 2560px.
+- **Month headers with Actual / Budget / Forecast** must match across boards: Grey_10 / Yellow_10 / Teal_10 on header and cells, header text bold Grey_100. Grey text on a grey header reads as broken.
+- **Header colour trials:** when Mike asks to try client-coloured headers, build each variant as a new view (rows on one grid, columns on another) and write down how to revert.
