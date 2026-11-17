@@ -13,6 +13,7 @@ Start from a reference and copy its structure; don't reinvent it:
 - **At most 10 active data-source subscriptions per frame.** The 11th fails with "Too many active subscriptions for this resource". Plan the sources before building:
   - unsubscribe lookup sources once loaded
   - compute small aggregates in JS from a source you already have instead of subscribing to another
+  - for a frame with many screens (FRP cockpit: 35 sources, 13 screens), keep a few global sources, and subscribe each screen's sources only while that screen is open: unsubscribe them when the step changes
 - **A data source cannot mix value types.** A text or dimension list property and numeric metrics need separate sources.
 - **`update_frame` replaces the frame wholesale** and needs the full body, so changing data sources or bindings costs a full resend. `update_frame_body` find-and-replace is cheap for code-only fixes. Get the data sources right first time.
 - **The frame's browser storage appears blocked inside Pigment**, so the localStorage "tour seen" check treats the tour as seen and it doesn't auto-start. The Guide button works; tell the presenter to use it.
@@ -98,7 +99,8 @@ The explain text should match Part 1 of the demo script; both come from `story.j
 ## Delivering through the MCP
 
 - Keep readable source in the client folder (`specs/<client>/frames/<name>.js`) with its config JSON. The source is the master copy; the frame in Pigment is a deployment.
-- The body is sent in full as a tool argument, so size is tokens: two 50 KB frames cost about 50k output tokens. Minify only if it's large and the machine has a minifier.
+- The body is sent in full as a tool argument, so size is tokens: two 50 KB frames cost about 50k output tokens. Don't minify: Pigment's safe-code rules forbid minified frame code.
+- **A body over about 20 KB:** create the frame with unique placeholder lines (`//P1`, `//P2`, ...), then replace each with `update_frame_body` in chunks under 20,000 characters, split on line boundaries. Compare the returned `bodySizeBytes` with the local file's byte size to confirm nothing was lost.
 - After `create_frame`, read it back with `search_frames` and compare it with the local file. Small fixes go through `update_frame_body` find-and-replace; mirror them in the local file.
 
 ## Testing a frame locally (no Node or Python needed)
@@ -115,3 +117,7 @@ Mike's machine has no Node or Python, so test with plain HTML and PowerShell:
    - writes appear in `window.__writes`
    - Reset writes the originals back
 4. Then test on the live model: each lever writes, the data source changes, Reset restores the baseline.
+   - Until Mike publishes, the frame's normal URL shows only "You are viewing a draft". Open `.../frames/<id>/edit` in a **new** Chrome tab: an older background tab's renderer freezes and screenshots time out.
+   - The first click just after the frame loads is sometimes ignored; click again.
+
+Where Python is available (`py -3.12` on Mike's machine since Nov 2026), a script can build one self-contained harness HTML (config JSON, mock SDK and the frame body inlined) that runs from `file://` in the browser pane and can be driven with JavaScript: click every step, check `window.__errors`, fire a write, Reset, and a refused write.
