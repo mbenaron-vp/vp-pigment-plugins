@@ -87,6 +87,8 @@ The explain text should match Part 1 of the demo script; both come from `story.j
 - Every sink binding must be a Metric or List that accepts input.
 - Read list items from the bound lists, not from arrays typed into the code. Hard-coded values are only a fallback while data loads.
 - One feed metric per data source in `06 Frame feeds`, summed to what the frame shows (year, not month), so no source passes 1,000 rows.
+- When a selector is a List Property (for example a transaction list's Account property), name the dynamic filter after the **target list's** binding (`accountList`), not the property binding. The property name fails with "No binding found with the name {{bindingName}}".
+- Transaction detail (ledger lines behind an actual): add one text "Frame Line" property that joins the fields with `|`, read it with a source labelled by the list and filtered by its Account, Location and Period properties, and open it on demand with a subscription that closes itself after the first data. One subscription, no mixed value types, no matching rows across sources.
 
 ## Style
 
