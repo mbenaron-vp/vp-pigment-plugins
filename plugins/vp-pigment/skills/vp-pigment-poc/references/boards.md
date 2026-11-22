@@ -69,7 +69,15 @@ The same test applies to a grid alone on a full-width row: if its content ends w
 
 ### The width gotcha that wasted an hour
 
-On a view with metrics on columns, **`dataColumnsWidth` is ignored on boards**: every column renders at 100px whatever the view says. Always set **`perMetricColumnWidthOverrides` for every value field** (ids from `get_views` with `Values`), plus `rowHeaderColumnWidths` for each row pivot. Set `rowHeight` (Medium) at the same time.
+On most views, **`dataColumnsWidth` is ignored on boards**: every data column renders at 100px whatever the view says. Which setting works depends on the view's shape:
+
+| View | `dataColumnsWidth` on a board | Set instead |
+|---|---|---|
+| Metrics on columns | Ignored (100px) | One `perMetricColumnWidthOverrides` entry for every value field |
+| Single-metric view: a Metric block's view, no `metricsLocation` (for example one P&L report metric with months or versions on columns, or a status heatmap) | Ignored (100px) | One `perMetricColumnWidthOverrides` entry on the metric's value field id; it sizes the data columns |
+| Table view with metrics on rows | Honoured | `dataColumnsWidth` is enough |
+
+Read the value field ids with `get_views` (include `Values`). Always set `rowHeaderColumnWidths` for each row pivot, and `rowHeight` (Medium) at the same time.
 
 ```
 update_view_grid_layout(viewId, layout = {
@@ -127,7 +135,8 @@ Then measure in the browser (`getBoundingClientRect` on a header cell, or a zoom
 
 - No footer. Illustrative-data notes go in the demo script's known gaps.
 - Back on step 1 goes to Home. The last board (the workflow tracker) has Finish, which goes to Home.
-- Home uses `NavigateToBoard` to the Home board (`BackToHomepage` fails through the MCP). The frame opens with `OpenStaticLink` to `https://pigment.app/w/vantagepoint/application/{appId}/frames/{frameId}` (`NavigateToFrame` is rejected by the MCP).
+- Home uses `NavigateToBoard` to the Home board (`BackToHomepage` fails through the MCP).
+- **Buttons that open the frame (Guide, the Home cockpit card) use `OpenStaticLink`** to `https://pigment.app/w/<workspace>/application/<appId>/frames/<frameId>` (`<workspace>` is the slug in the Pigment URL, `vantagepoint` for VP's workspace). An ActionButton of type `NavigateToFrame` is rejected ("Value cannot be null") while the frame is a private draft, which it is from `create_frame` until Mike publishes it. Note in the build spec which buttons carry the static link, so they can be found if the frame is ever recreated with a new id.
 - A board page selector only filters views that carry that dimension in Pages. Add the page to the view even when the dimension is on rows.
 - Set each board's page defaults to the story's opening case.
 - **Grouping pages merge into the dimension's selector.** A view paged by Employee > Location or Month > Year shows up as the board's Location or Year selector, so one selector drives views paged by the dimension and by the grouping.
@@ -226,6 +235,7 @@ Target a calculated item (a variance column) with its pivot id and the calculate
 - A balance (closing WIP) on a grid with a month total needs a LastNonBlank aggregation on the month pivot for that value.
 - A chart on a dimension whose display property is a code (grade "9") shows codes on the axis: set the pivot's `customDisplayProperty` (for example "Job Title").
 - An input grid whose input columns are empty at baseline (an Approve tick box) needs `showEmptyColumns: true`, or the columns the presenter has to click are hidden.
+- **No chart or KPI opens at £0.** A what-if delta (cost increase since actuals, amount passed on to customers, change against budget) is zero until someone moves a lever, so on opening it shows an empty chart and a £0 tile and looks broken. Seed a realistic non-zero baseline input so every chart has bars on opening (Reconomy, Nov 2026: a 3% haulier rate rise from January). The seeded value is now part of the baseline: record it in the build spec, the demo script's reset table and the morning-of checklist, and have the demo move it on from there (3% to 5%) rather than from zero.
 
 ## Scenarios
 

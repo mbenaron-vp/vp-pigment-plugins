@@ -1,0 +1,5 @@
+# Written by build_frame.py
+example_frame.js
+example_frame_config.json
+harness.html
+__pycache__/

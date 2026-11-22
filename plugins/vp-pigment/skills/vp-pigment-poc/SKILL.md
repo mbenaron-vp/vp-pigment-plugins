@@ -26,7 +26,8 @@ The bar:
 | `references/frames.md` | Building or changing a frame: Pigment limits, SDK patterns, explain panel, tour, local testing |
 | `references/demo-script.md` | Writing the demo script: Part 1 model explainer and Part 2 click path |
 | `references/testing.md` | The test pass and the browser check |
-| `assets/frame-test-harness.html`, `assets/serve.ps1` | Testing a frame locally |
+| `assets/frame-test-harness.html`, `assets/serve.ps1` | Testing a frame locally without Python |
+| `assets/examples/frame-build-kit/` | Building a frame with Python: build script, mock SDK, self-contained harness |
 | `assets/examples/trust-payments-spm-cockpit/` | A complete house-standard frame to copy from |
 
 ## Two modes
@@ -302,7 +303,7 @@ Read `references/boards.md` first. In short:
 Read `references/frames.md` first. Every POC gets one. Key points:
 - Copy the Trust Payments SPM Cockpit structure.
 - Keep to 10 or fewer live subscriptions and no mixed value types in a source.
-- Test locally with the harness before sending.
+- Test locally with the harness before sending. Where Python is available, build the body, config and harness with `assets/examples/frame-build-kit/`.
 - The frame is private until Mike unticks it, and the first write asks permission.
 
 ### Phase 5 - Test pass

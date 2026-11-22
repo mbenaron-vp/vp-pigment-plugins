@@ -1,0 +1,30 @@
+{
+  "client": "Example",
+  "explain": {
+    "revenue": {
+      "title": "Revenue",
+      "what": "What the regions are forecast to sell over the next 12 months.",
+      "formula": "Sum of every region's revenue",
+      "where": "Board 2, the revenue grid"
+    },
+    "gp": {
+      "title": "Gross profit",
+      "what": "Revenue less the direct costs of delivering it.",
+      "formula": "Sum of every region's gross profit",
+      "where": "Board 2, the gross profit column"
+    },
+    "margin": {
+      "title": "Margin",
+      "what": "How much of each £1 of revenue is left after direct costs.",
+      "formula": "Gross profit ÷ revenue",
+      "where": "Board 2, the KPI strip"
+    },
+    "region": {
+      "title": "Region revenue",
+      "what": "One region's revenue: last year's sales grown by the region's growth rate.",
+      "formula": "Last year × (1 + growth)",
+      "where": "Board 2, the amber growth column"
+    }
+  },
+  "tour": []
+}
