@@ -23,12 +23,13 @@ The bar:
 | File | Read before |
 |---|---|
 | `references/boards.md` | Creating or changing any board or view: grid units, widths, metric names, drafts and repointing, colour, nav, Home board |
-| `references/frames.md` | Building or changing a frame: Pigment limits, SDK patterns, explain panel, tour, local testing |
+| `references/frames.md` | Building or changing a frame: Pigment limits, SDK patterns, explain panel, tour, submission and return workflow, local testing |
 | `references/demo-script.md` | Writing the demo script: Part 1 model explainer and Part 2 click path |
 | `references/testing.md` | The test pass and the browser check |
 | `assets/frame-test-harness.html`, `assets/serve.ps1` | Testing a frame locally without Python |
-| `assets/examples/frame-build-kit/` | Building a frame with Python: build script, mock SDK, self-contained harness |
-| `assets/examples/trust-payments-spm-cockpit/` | A complete house-standard frame to copy from |
+| `assets/examples/frame-build-kit/` | Building a frame with Python: build script with Pigment's safe-code lint, mock SDK, design page for an Artifact, pull and deploy scripts |
+| `assets/examples/reconomy-cockpit/` | The newest house-standard cockpit: branded design, submission and return workflow, process graphic, action bar. Its README says which functions to lift |
+| `assets/examples/trust-payments-spm-cockpit/` | An earlier complete frame to copy from |
 
 ## Two modes
 
@@ -69,7 +70,8 @@ These are the house standard. Read their actual code with `search_frames` (by `i
 
 | Reference | App ID | Frame / board ID | What to take from it |
 |---|---|---|---|
-| Trust Payments SPM Cockpit | `b0581029-8cce-4c63-910a-92b79aae7b6b` | frame `7f5f1f7a-c053-4200-969c-5b8423367541` (source in `assets/examples/`) | Newest standard: 4-step rail, click-to-explain drawer with Back stack, subscriptions kept under 10, write sinks, Reset, tour |
+| Reconomy cockpit (Nov 2026) | `0e12a5ce-8b90-48b5-9fb0-c786e53c76ad` | frame `1effe5ba-b3f8-4500-b168-d4e5b8835f1f` (source in `assets/examples/reconomy-cockpit/`) | Newest standard: designed with Mike in an Artifact; status strip and return reasons on every step, submit pop-up that locks submitted businesses, action bar, sign-off process graphic |
+| Trust Payments SPM Cockpit | `b0581029-8cce-4c63-910a-92b79aae7b6b` | frame `7f5f1f7a-c053-4200-969c-5b8423367541` (source in `assets/examples/`) | Earlier standard: 4-step rail, click-to-explain drawer with Back stack, subscriptions kept under 10, write sinks, Reset, tour |
 | Trust Payments SPM boards and demo script | same app | boards SPM 0-4 | Part 1 explainer tables, colour scales, whole-pound merchant grids |
 | Benchmark Capital cost envelope | `8fa6e9c8-6474-416a-bfd5-883edf335ee2` | boards 00-06 | Board sizing and widths done properly; weekly versions; waterfall and bridge; approval impact |
 | FRP Budget Round | `f33d2027-5f81-4177-9612-06cc6df08e5a` | frame `49bebf31-4523-4cf5-ae69-8346c2425d2b` | Readable frame template: levers that write, monthly impact against baseline, commentary, submit/approve |
@@ -304,7 +306,8 @@ Read `references/boards.md` first. In short:
 Read `references/frames.md` first. Every POC gets one. Key points:
 - Copy the Trust Payments SPM Cockpit structure.
 - Keep to 10 or fewer live subscriptions and no mixed value types in a source.
-- Test locally with the harness before sending. Where Python is available, build the body, config and harness with `assets/examples/frame-build-kit/`.
+- Test locally with the harness before sending. Where Python is available, build the body, config and harness with `assets/examples/frame-build-kit/`; the build refuses a body that breaks Pigment's safe-code rules.
+- **Design in an Artifact** (Mike, Nov 2026): publish the kit's `design.html` (the frame's real code on mock data) as a private Artifact and give Mike the link. He restyles it in claude.ai; pull it back with `pull_design.py` and deploy only the changed lines with `deploy_edits.py` (`references/frames.md`, "Design in an Artifact, deploy to the frame").
 - The frame is private until Mike unticks it, and the first write asks permission.
 
 ### Phase 5 - Test pass
@@ -401,6 +404,7 @@ Give Mike a short chat summary: the click path in one line per screen, what wasn
 - Home has the client logo and a card for every board in the story
 - No orphan metrics or assumptions; every view saved and every widget pointing at the saved view; boards and frame open on the story's opening case
 - The frame has click-to-explain on every number and driver tile, a guided tour with Skip and Esc, write-back with reset, and is not private
+- Mike has approved the design page, and the live frame matches the approved build (lint clean, `deploy_edits.py` shows 0 edits)
 - Real data is reconciled against the named source file, illustrative data is labelled, and template leftovers are gone
 - The test pass table is green, or each exception is explained
 - `demo-script.md` has Part 1 (model explainer, every element) and Part 2 (tested click path, reset table), and `build-spec.md` is current

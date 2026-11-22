@@ -1,5 +1,9 @@
-# Written by build_frame.py
+# Written by build_frame.py, pull_design.py and deploy_edits.py
 example_frame.js
 example_frame_config.json
+design.html
 harness.html
+deployed.js
+deploy_edits.json
+last_pull.diff
 __pycache__/

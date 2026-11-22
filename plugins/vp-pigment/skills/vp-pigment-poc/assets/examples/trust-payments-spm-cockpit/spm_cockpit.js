@@ -10,7 +10,6 @@
   var C = { navy: '#1B478B', blue: '#2079EE', jade: '#14B8A6', pine: '#0D9488', coral: '#F43F5E', amber: '#F59E0B', gold: '#FCD34D', seafoam: '#E0EAE9', cloud: '#AABED6', ink: '#181818', violet: '#96A0FF', slate: '#2D4E71', mut: '#64748b', line: '#e2e8f0', bg: '#f6f8fb' };
   var VCOL = ['#2079EE', '#1B478B', '#14B8A6', '#96A0FF', '#F59E0B', '#2D4E71', '#F43F5E', '#0D9488'];
   var OPEN_REP = 'Hannah Lowe', OPEN_Q = 'Q3 26';
-  var TOUR_KEY = 'trustpayments_spm_cockpit_tour_seen_v1';
 
   var S = {
     reps: [], rep: {}, seg: {}, att: {}, months: [], co: {}, q: {}, quarters: [], rv: {}, bands: [], grid: {}, verticals: [],
@@ -529,14 +528,12 @@
   function onFocusOut(e) { if (e.target.classList && e.target.classList.contains('inp')) { S.editing = false; timer(scheduleRender, 50); } }
   function onScroll() { var m = $('main'); if (!m) return; var best = 1; for (var i = 1; i <= 4; i++) { var p = $('p' + i); if (p && p.offsetTop - 80 <= m.scrollTop) best = i; } if (best !== S.step) { S.step = best; var r = $('rail'); if (r) r.outerHTML = rail(); } }
   function tourStep() { var st = TOUR[S.tour]; if (st.step) goStep(st.step); else render(); timer(function () { var el = $(st.el); if (el && el.scrollIntoView) el.scrollIntoView({ block: 'center' }); timer(function () { if ($('tourL')) $('tourL').innerHTML = tourHtml(); }, 250); }, 30); }
-  function endTour() { S.tour = -1; try { localStorage.setItem(TOUR_KEY, '1'); } catch (e) { } render(); }
-  function maybeAutoTour() { var seen = false; try { seen = localStorage.getItem(TOUR_KEY) === '1'; } catch (e) { seen = true; } if (!seen && S.tour < 0) { S.tour = 0; tourStep(); } }
+  function endTour() { S.tour = -1; render(); } // no storage in frames: the Guide button is the way into the tour
   function snapshotBase() {
     if (S.base || loadingAll()) return;
     var m = lastActualMonth(), a = {}, r = {};
     S.reps.forEach(function (x) { a[x.name] = repM(x.name, m).att; var o = {}; Object.keys(S.att[x.name] || {}).forEach(function (k) { o[k] = S.att[x.name][k].r12; }); r[x.name] = o; });
     S.base = { att: a, r12: r };
-    timer(maybeAutoTour, 600);
   }
 
   // ---------- styles ----------
