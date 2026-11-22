@@ -76,6 +76,7 @@ These are the house standard. Read their actual code with `search_frames` (by `i
 | FRP 12-step story (redesign) | `f33d2027-5f81-4177-9612-06cc6df08e5a` | boards 02 Profit and Loss `77d09dd6-0f71-484c-93b4-caf5dae3722b`, 07 Capital Requests `70058bc6-8182-4081-81f2-b912151c7fbc`, 12 Workflow Tracker `06d5e6fe-c5b3-4765-9204-bd194e999cba` | Management P&L with running subtotals; overridable rate card; capex approve-and-depreciate; sign-off area on every board feeding a workflow tracker |
 | MAT Planning Cockpit (click to explain) | `804ef304-8e38-4dcd-94f6-92d94339ba9a` | frame `67d799be-9133-42f6-81c7-bdabcec1da51` | Click-to-explain panel, queued writes with a "recalculating" state, driver editor |
 | MAT demo home | `804ef304-8e38-4dcd-94f6-92d94339ba9a` | board `2cf6a4dc-6751-4cde-9327-049a5fda1250` | Home board: client logo, cockpit card, numbered story boxes, one card per board |
+| Reconomy board 1, edited by Mike (Nov 2026) | `0e12a5ce-8b90-48b5-9fb0-c786e53c76ad` | board `01488672-c031-4512-8b3c-5de15f8d9020` | Header standard: no title row, bold H2 section headers sized to their words, italic instruction beside each; Guide as a static link to the frame |
 
 If a newer POC beats these, add it to this table.
 
@@ -99,13 +100,13 @@ Load the specialist skill at the step that needs it:
 Deliberate overrides of Pigment's board guidance, for demo apps only:
 - Images are expected (client logo on Home).
 - Every board carries a navigation bar.
-- **No instruction boxes, subtitle lines or footer notes on boards.** The explanation lives in the demo script.
+- **No "What this shows" boxes, title rows, subtitle lines or footer notes on boards.** The only text beyond headers is one italic instruction beside each section header. The explanation lives in the demo script.
 
 ## Non-negotiables
 
 1. **One story, boards first.** It runs from the Home board through a logical sequence of native boards, into the demo script. Each board is one moment in the story and answers one client pain. **Frames are never the opener.** They come at the end as "if you want it presented differently, you can wrap the whole process in a frame". Every process shown in a frame must also exist as a board.
 2. **No grid-only boards, anywhere in the app.** Every board, including "under the bonnet" boards you might open, has a KPI strip and at least one chart, and every input grid has a chart or KPI that moves when a value changes. Use colour: inputs highlighted, variances coloured, colour scales on attainment-type numbers, compact rows (Small) on long grids.
-3. **No text on boards beyond titles** (Mike, Nov 2026). No "What this shows / Try this / Watch" boxes, **no italic subtitle line under a section header, and no footer notes** ("Illustrative data…", "AI note"). A section header is an H2 title only. The talk track, definitions and illustrative-data notes go in the demo script. **One exception (Mike, FRP 17 Nov 2026): every board carries one plain "what to do here" line on the same row as the board title, to its right** (for example "Enter the office settings, the FY27 % increases and the monthly leave weightings, then check the rate card"). It tells the person arriving what they need to do; it is not a description of the board.
+3. **No text on boards beyond section headers and their instructions** (Mike, Nov 2026). No "What this shows / Try this / Watch" boxes, **no title row under the nav bar, no description paragraphs and no footer notes** ("Illustrative data…", "AI note"). The talk track, definitions and illustrative-data notes go in the demo script. **Each section header is bold H2 with one italic instruction beside it on the same row** (Mike, Reconomy 22 Nov 2026, replacing the FRP "what to do here" line beside the board title): one or two plain sentences telling the user how to use the section below, such as "Type over any amber cell: volume, growth, price or cost. Revenue, gross profit and margin update straight away", or "Read only." plus what it shows. It is an instruction, not a description of the chart. Pattern in `references/boards.md`, "Section headers".
 4. **Boards look finished** (`references/boards.md`):
    - widgets sized so nothing scrolls inside them
    - every column and row header readable, using per-column widths
@@ -288,7 +289,7 @@ Before building, write `story.json` in the client folder. Every piece of explana
 ### Phase 4a - Boards (the VP look)
 
 Read `references/boards.md` first. In short:
-- Build every board on the standard template: nav bar, H2 title, KPI strip, input grid with its chart, how it's worked out, drill grid, sign-off area. No subtitle lines, no footer.
+- Build every board on the standard template: nav bar, KPI strip (no title row), then each section with its bold H2 header and italic instruction (input grid with its chart, how it's worked out, drill grid), then the sign-off area. No subtitle lines, no footer.
 - **Configure every view completely before it goes on a board.** Once a view is on a board, later edits fork a draft (unless you created it in the last hour). To change an older view that's on a board, create a new view and swap the widget.
 - Size widgets in rows of about 23px; set per-column widths on every grid.
 - Give prefixed metrics display names.
@@ -392,7 +393,7 @@ Give Mike a short chat summary: the click path in one line per screen, what wasn
 - The run of show fits the slot, including Pigment 101 and the product tour
 - The story brief is confirmed and `story.json` is written
 - Home board, cockpit frame and every board follow `references/boards.md` and `references/frames.md`, checked in the browser
-- Every board has a nav bar, a KPI strip, live KPI or chart beside its inputs, a "how it's worked out" table for its headline numbers, a drill path and a sign-off area; no instruction boxes, subtitle lines or footers, no raw metric names, no cut-off headers, no scrolling widgets
+- Every board has a nav bar, a KPI strip, live KPI or chart beside its inputs, a "how it's worked out" table for its headline numbers, a drill path and a sign-off area; every section header bold H2 with its italic instruction; no "What this shows" boxes, title rows, subtitle lines or footers, no raw metric names, no cut-off headers, no scrolling widgets
 - A workflow tracker board exists and every sign-off area feeds it; changing a status on a board moves the tracker (tested)
 - Every Excel input tab has a story board with its inputs on top in the client's layout (every column, inputs coloured, actuals beside budget) and reporting below; no old/new columns of the same input; no placeholder rows; no scenario section on any board
 - Every month grid shows the Data Type header (Actual / Budget / Forecast); the roll-forward has been rehearsed (switchover moved, totals checked, reset)

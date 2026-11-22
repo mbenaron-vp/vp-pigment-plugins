@@ -4,7 +4,7 @@ Read this before creating or changing any board or view. Every rule here comes f
 
 ## Mike's standing feedback (Benchmark Capital and Trust Payments, Nov 2026)
 
-1. **No "What this shows / Try this / Watch" boxes on boards.** They look like scaffolding. That text is the presenter's voice-over and lives in the demo script. **Section headers are an H2 title only: no italic line under them and no footer note** (FRP, Nov 2026, superseding the earlier "one plain line is fine"). Exception: the one "what to do here" line beside the board title (see "FRP round 2" below).
+1. **No "What this shows / Try this / Watch" boxes on boards.** They look like scaffolding. That text is the presenter's voice-over and lives in the demo script. **The only text is each section's bold H2 header with one italic instruction beside it on the same row, and no footer note** (Reconomy, 22 Nov 2026; see "Section headers" under "The standard board"). This replaces the FRP rules "H2 title only, no italic line" and "one 'what to do here' line beside the board title", and there is no board title row any more.
 2. **Every grid shows full names.** Column headers, row headers and metric names must never be cut off ("Committed…", "Headroom if…").
 3. **No scroll bars inside widgets and no big white space.** Size widgets so grids and text don't scroll; a narrow grid gets a chart or KPI beside it.
 4. **No raw metric names on screen** (`CE_What changed`, `IN_Stage`). See "Metric names" below.
@@ -34,7 +34,8 @@ Heights that read well (rows):
 | Widget | Height |
 |---|---|
 | Nav bar (Back, Home, step marker, Next, Guide) | 3 |
-| Section header: H2 title only | 2 |
+| Section header row: bold H2 header beside its italic instruction | 2 |
+| Box section header (Sign-off, Review and approve), full width | 3 |
 | KPI strip (one KPI widget, several metrics) | 6 |
 | Home: client logo (w2) beside the title banner (w8) and Guide (w2) | 4 |
 | Home: board cards (ActionButton, Card layout), six per row at w2 | 7 |
@@ -125,13 +126,12 @@ Then measure in the browser (`getBoundingClientRect` on a header cell, or a zoom
 
 | Row | Contents | Height |
 |---|---|---|
-| Nav bar | Back x0 w2, Home x2 w2, navy step marker x4 w4 ("Step 2 of 6 - Weekly movements"), Next x8 w2, Guide x10 w2 | 3 |
-| Title | H2 text only | 2 |
-| KPI strip | One KPI widget with the board's headline numbers | 6 |
-| Main section | Input grid (amber) with the chart that moves when it changes, side by side, or the grid full width with the chart underneath | 13-36 |
-| How it's worked out | H2 header, then a table with the parts in formula order | 2 + 15-24 |
-| Detail | Drill grid down to the people, roles or rows | 24-30 |
-| Sign-off | H2 "Sign-off" box (Indigo_10 background), sign-off panel w9 h5, round progress KPI w3 h3, "Open workflow tracker" button w3 h2 (Green_80) | 2 + 5 |
+| Nav bar | Back x0 w2, Home x2 w2, navy step marker x4 w4 (Box, bold H2: "Step 2 of 6 - Weekly movements"), Next x8 w2, Guide x10 w2 | 3 |
+| KPI strip | One KPI widget with the board's headline numbers, straight after the nav bar (no title row) | 6 |
+| Main section | Header row (bold H2 header and italic instruction), then the input grid (amber) with the chart that moves when it changes, side by side, or the grid full width with the chart underneath | 2 + 13-36 |
+| How it's worked out | Header row, then a table with the parts in formula order | 2 + 15-24 |
+| Detail | Header row, then a drill grid down to the people, roles or rows | 2 + 24-30 |
+| Sign-off | Box header "Sign-off", full width, bold H2 (Indigo_10 background, Indigo_100 text), then sign-off panel w9 h5, round progress KPI w3 h3, "Open workflow tracker" button w3 h2 (Green_80) | 3 + 5 |
 
 - No footer. Illustrative-data notes go in the demo script's known gaps.
 - Back on step 1 goes to Home. The last board (the workflow tracker) has Finish, which goes to Home.
@@ -145,6 +145,31 @@ Then measure in the browser (`getBoundingClientRect` on a header cell, or a zoom
 - `update_board_page_configurations` rejects a page no view on the board exposes. After removing widgets, re-read the board's pages before setting defaults.
 - A single-select Version selector can still default to two items (`singleModality: false`, Actual + Budget) for a multi-year view, when the versions don't overlap in time.
 
+### Section headers: bold header, italic instruction (Mike, Reconomy 22 Nov 2026)
+
+From Mike's own edit of a Reconomy board: section headers in bold, and to their right an italic instruction on how to use the section below, "such that the direction is really clear". He removed the board title row as too literal and AI-looking.
+
+1. **No title row.** A story board opens with the nav row (Back, Home, step marker, Next, Guide), then the KPI strip straight away. The step marker already names the board.
+2. **Section header:** a Text widget, layout `Regular`, fontSize `H2`, bold, height 2, only as wide as its words need: 2 columns for about 15 characters, 3 for about 26, 4 for about 36 (measured on Mike's 2560px screen; check at 1536px). Keep the wording short ("Scheme drivers", "What the drivers produce").
+3. **Instruction:** on the same row, a second Text widget fills the rest of the 12 columns: layout `Regular`, fontSize `Normal`, italic, height 2. One or two plain sentences telling the user how to use the section below: what to type where and what updates, or "Read only." plus what it shows. It is an instruction, not a description of the chart. For example:
+   - "Type over any amber cell: volume, growth, price or cost. Revenue, gross profit and margin update straight away."
+   - "Read only. Both charts update as soon as you change a driver above. Hover over a bar for its value."
+4. **Step marker** in the nav row ("Step 1 of 4 - Compliance schemes"): Box layout, Indigo_100 background, white text, fontSize `H2`, bold.
+5. **Box section headers** (Sign-off, Review and approve) stay full width with no instruction beside them: Box layout, Indigo_10 background, Indigo_100 text, bold `H2`, height 3.
+
+Still banned: "What this shows / Try this / Watch" boxes, description paragraphs and footer notes. The presenter's voice-over stays in the demo script.
+
+The text widget shape for `update_board_widgets`:
+
+```
+{ "widgetType": "Text", "widgetPosition": { "x": 0, "y": 9, "width": 2, "height": 2 },
+  "textWidgetConfig": { "layout": "Regular", "editorValue": [{ "type": "Paragraph", "paragraphNodeConfig": { "children": [
+    { "type": "Text", "textNodeConfig": { "text": "Scheme drivers", "bold": true, "italic": false, "underlined": false, "fontSize": "H2" } }
+  ] } }] } }
+```
+
+The instruction is the same with `"bold": false, "italic": true, "fontSize": "Normal"`, at x 2, width 10. Reference: Reconomy app `0e12a5ce-8b90-48b5-9fb0-c786e53c76ad`, board 1 `01488672-c031-4512-8b3c-5de15f8d9020` (header widget `7fdf0487` at x0 w2, instruction widget `aa4ec056` at x2 w10).
+
 ## The Home board
 
 Logo (Image widget, Fit, white background, alt text, from the client's own site: find it with `document.querySelectorAll('img')` on their home page) at x0 w2 h4, the navy title box at x2 w8 h4, and Guide at x10 w2 h4. Then:
@@ -152,6 +177,7 @@ Logo (Image widget, Fit, white background, alt text, from the client's own site:
 - "The round in N steps" H2 and **one card for every board** in demo order, six per row at w2 h7 (Card layout, title "1  Overview" and a one-line description). Colour the cards by act (for example blue for the model, teal for the planning round, green for the tracker).
 - "Round status" H2: round progress KPI, sign-offs by status KPI, progress by entity chart.
 - An "Under the bonnet" card for the archive folder, and the cockpit frame card last.
+- Home keeps its title box. Its section headers ("At a glance", "The round in N steps", "Round status") follow the header standard: bold H2 with an italic instruction beside it.
 - No subtitle paragraph and no footer.
 
 ## The management P&L pattern
@@ -312,7 +338,7 @@ The P&L board reuses `Line Budget` filtered to the workbook's P&L input lines (m
 
 ## FRP round 2 (Mike, 17 Nov 2026): what he asked for once the story was right
 
-- **"What to do here" line beside every board title.** Plain text on the title row, to the right: what the person arriving needs to do (enter, check, approve). Narrow the title widget to make room. Keep it to one line at 1536px.
+- **The "what to do here" line beside the board title is superseded** (Reconomy, 22 Nov 2026): there is no board title row, and every section header carries its own italic instruction (see "Section headers" under "The standard board"). The aim is the same: the person arriving knows what to do.
 - **Neutral KPI tiles on every board.** No rainbow of KPI colours. House default: KPI view formatting with one override, empty `pathElements`, `area: Both`, `backgroundColor: Indigo_10`, `textColor: Indigo_100` (pale indigo, navy text; matches an Indigo nav bar). The colour lives on the view, so build a new view with the style and repoint the widget rather than editing a view already on a board (that forks a draft).
 - **Average utilisation (or the board's key ratio) as a KPI tile** beside the headline tiles, not only as a yellow total in the grid.
 - **Budget holder commentary as a card on the board it belongs to** (WIP and cash on the WIP board, overheads on the overheads board, direct costs on staff). Keep the consolidated narrative board as well. One editable view per card, filtered to its section, following the board's Location page.
