@@ -106,6 +106,14 @@ The explain text should match Part 1 of the demo script; both come from `story.j
 - **A body over about 20 KB:** create the frame with unique placeholder lines (`//P1`, `//P2`, ...), then replace each with `update_frame_body` in chunks under 20,000 characters, split on line boundaries. Compare the returned `bodySizeBytes` with the local file's byte size to confirm nothing was lost.
 - **Keep non-ASCII characters as real UTF-8; never escape them.** Pigment's safe-code rules ban `\u` and `\x` escapes, so £, €, × and the en dash go into the body as the characters themselves. The live `bodySizeBytes` then equals the local file's UTF-8 byte size exactly (Reconomy, Nov 2026: 85,606 bytes both). This replaces the earlier advice to escape them and subtract the byte saving.
 - After `create_frame`, read it back with `search_frames` and compare it with the local file. Small fixes go through `update_frame_body` find-and-replace; mirror them in the local file.
+- **Changing bindings, sources or sinks on a big frame** (Reconomy v4, 122 KB):
+  1. Send `update_frame` with the full config and a placeholder body of unique markers, one per chunk (`/*@@P01@@*/` ...).
+  2. Fill each marker with `update_frame_body`, one chunk of about 15,000 characters per call.
+  3. Work out the expected running `bodySizeBytes` after each chunk before you start, and check every reply against it. Chunks are retyped into the tool call, so typos happen: a 4-byte excess caught one, fixed with one more edit.
+- **Prove the live body is byte-identical**, because an equal-length typo passes the size check:
+  1. Open `.../frames/<id>/edit` in Chrome and click the `</>` code view. The body is the page's first `textarea`.
+  2. Hash it in the page with `crypto.subtle.digest('SHA-256', new TextEncoder().encode(text))` and compare it with the local file's SHA-256 inside the page, returning only true or false: the Chrome extension blocks long hex output.
+  3. Close the code view without saving.
 
 ## Testing a frame locally
 
