@@ -89,6 +89,8 @@ The explain text should match Part 1 of the demo script; both come from `story.j
 - Every sink binding must be a Metric or List that accepts input.
 - Read list items from the bound lists, not from arrays typed into the code. Hard-coded values are only a fallback while data loads.
 - One feed metric per data source in `06 Frame feeds`, summed to what the frame shows (year, not month), so no source passes 1,000 rows.
+- When a selector is a List Property (for example a transaction list's Account property), name the dynamic filter after the **target list's** binding (`accountList`), not the property binding. The property name fails with "No binding found with the name {{bindingName}}".
+- Transaction detail (ledger lines behind an actual): add one text "Frame Line" property that joins the fields with `|`, read it with a source labelled by the list and filtered by its Account, Location and Period properties, and open it on demand with a subscription that closes itself after the first data. One subscription, no mixed value types, no matching rows across sources.
 
 ## Style
 
@@ -352,3 +354,7 @@ Mike's verdict on a frame where only the KPI tiles opened an explanation: "none 
 - **The page jumps when a pop-up opens** (Reconomy). `render()` saved and restored the scroll position, but restored it before the charts were drawn. The charts are empty at that moment, so the page is shorter and the scroll position is cut short. Restore `scrollTop` after `drawCharts()`.
 - **Figures touching chart bars** (Reconomy). Bar values drawn at the bar's end collide with the bars and with each other. Put them in their own right-hand column (about 90px, right-aligned), revenue and gross profit on two lines.
 - **% sign hard against an input box** (Reconomy). Give a unit after an input its own span with a 6px left margin.
+- **CSS class collisions break tables.** A month-header `th` shared the class `mh` with the pop-up header (`display:flex`), so every month heading stacked vertically and the grids collapsed. Prefix classes per component, and screenshot every step in the harness, not only check for errors.
+- **One scroll per page.** A scrolling `main` plus grids with their own `max-height` traps the mouse wheel. Let the page scroll, keep the header and step list `position:sticky`, and let grids scroll sideways only.
+- **Charts:** round axis ticks (1, 2, 2.5, 5 × 10ⁿ), month labels with the year when a chart spans more than a year, and the last label right-aligned so it isn't clipped. Show money inputs with thousand separators.
+- **Check the published view, not only the editor.** The editor narrows the frame; Mike sees it full width.
