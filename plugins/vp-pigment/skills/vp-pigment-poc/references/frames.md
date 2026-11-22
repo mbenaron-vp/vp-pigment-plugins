@@ -201,6 +201,59 @@ Evidence from Reconomy (22 Nov 2026):
 - a restyle dry run (accent colour and card radius) became 2 edits of 2,032 characters instead of an 86 KB resend
 - the storage fix went live as 3 edits, and the live size matched the local file exactly (85,606 bytes)
 
+## Submission and return workflow (Mike, Reconomy 22 Nov 2026)
+
+Every cockpit with steps gets a real submission process, wired to the model, not to the screen. Copy it from `assets/examples/reconomy-cockpit/` (functions named in its README). Mike's feedback that set it:
+- a step ticked as done just because he had visited it
+- Next moved on with no "do you want to submit it?"
+- he could see RLG was Returned but not why
+- the pop-up let him submit Noventiz again although it was already submitted
+- "2 of 3 submitted" didn't say which businesses
+- the separate "Submit this step" and Next buttons looked untidy
+
+### In the model (build it first)
+
+| Metric | Type, dimensions | Who writes it |
+|---|---|---|
+| WF Stage Applies | Boolean, Stage × Entity | Set up once: which stages apply to which business |
+| WF Stage Status | Dimension (Workflow Status), Stage × Entity. Formula `IF('WF Stage Applies', 'Workflow Status'."Not started")` with overrides on | The business (Submitted), the reviewer (Approved, Returned) |
+| WF Stage Comment | Text, Stage × Entity | The business: its note when it submits |
+| WF Return Reason | Text, Stage × Entity | The reviewer: why it went back. Kept as a record after resubmission |
+
+Keep the business's note and the reviewer's reason in **two metrics**. With one comment field, resubmitting overwrites the reason and the reviewer can't see the conversation. Show both, plus status, owner, due date and progress, in every board's sign-off panel and in the tracker's review grid.
+
+In the frame, comment, owner and return reason are one text source (same value type). Subscribe to it globally next to the status source, because every step shows them. Status, comment and return reason are three sinks.
+
+### In the frame
+
+- **Ticks follow status, never visits.** A step is done only when every business it applies to is Submitted or Approved. A step with a Returned business shows a red `!` in the rail.
+- **The rail names who has to act.** Under each step: one coloured dot per business, then one line, e.g. "RLG returned", "Reconomy UK to submit", "Noventiz waiting for review" or "All approved". Never a bare count.
+- **A status strip at the top of each step:**
+  - one card per business with its status chip, a plain line ("Submitted, waiting for the group to review") and its owner
+  - for each Returned business, a red box with the reason, the business's last note, and a **Fix and resubmit** button that opens the pop-up with only that business ticked
+- **One action bar across the bottom.** A full-width bar that is a sibling of the scrolling area, not inside it, so it never scrolls away:
+  - left: the step and one pill per business with its status
+  - right: Back, **Submit step** with a count of businesses left to submit (or "All submitted"), and Next as the primary button
+  - the toast sits above the bar
+- **Next opens the submit pop-up only if something can be submitted.** In the pop-up:
+  - Not started, In progress and Returned can be ticked, and start ticked. Submitted and Approved are greyed out with the reason ("Already submitted. Waiting for the group to review it.").
+  - A Returned row shows **Why it came back** under it, and the comment box becomes "What did you change?". Resubmitting a returned business without saying what changed is blocked.
+  - Show errors inside the pop-up: the toast sits behind the scrim.
+  - The buttons are Cancel, Continue without submitting and Submit and continue. Write quietly, then show one toast for the lot ("Submitted compliance schemes for RLG. The group can now review it on the workflow tracker.").
+- **The sign-off step shows where the round is.**
+  - a stacked progress bar by status with counts and the round progress %
+  - process columns Not started → In progress → Submitted → Approved, with a Returned lane underneath and an arrow back to In progress ("sent back to the business to fix, then submitted again")
+  - every business and stage in it is a button that opens the review pop-up; the grid below shows the return reason in red in Returned cells
+- **The review pop-up asks only what each status needs:**
+  - Approve: no text, says it can't be resubmitted after that
+  - Return: the reason is required and goes to Return reason; "the business sees this on its step"
+  - any other status: a note, written to the comment
+  - always show the business's note and, when re-reviewing, the previous return reason
+
+### Boards
+
+- Add Return reason to the sign-off panels and the review grid.
+- **Build a new view fully configured (values, widths, formatting, filters) before it goes on any board, then repoint the widgets.** Any edit after that forks a draft, even on a view you created minutes earlier, and `save_draft_views` needs Mike's confirmation. If that happens, leave the draft and build the view again.
 
 ## Drill everywhere (Mike, FRP 17 Nov 2026)
 
@@ -220,3 +273,7 @@ Mike's verdict on a frame where only the KPI tiles opened an explanation: "none 
 - **First month header stuck and left-aligned when scrolling right.** `th:first-child` also matches the first month cell of the second header row. Put the sticky-left rule on an explicit class (`th.c0`), and give the second header row `top` equal to the first row's height.
 - **Clicks lost.** A re-render between pointer down and up replaces the button under the cursor. Set a flag on `pointerdown`, skip renders while it is set, and render once on `pointerup`.
 - **Read-only cells look like text.** Give drillable cells `cursor:pointer` and a hover outline so it is obvious they open something.
+- **Close buttons Mike couldn't see** (Reconomy). A "ghost" button styled for the navy header (white text, transparent background) was reused in the white explain drawer and pop-ups, so Close was invisible. Use the light secondary style on white panels, and add a CSS fallback: `.drawer .btn.ghost, .modal .btn.ghost { color: navy; border-color: line; background: #fff }`.
+- **The page jumps when a pop-up opens** (Reconomy). `render()` saved and restored the scroll position, but restored it before the charts were drawn. The charts are empty at that moment, so the page is shorter and the scroll position is cut short. Restore `scrollTop` after `drawCharts()`.
+- **Figures touching chart bars** (Reconomy). Bar values drawn at the bar's end collide with the bars and with each other. Put them in their own right-hand column (about 90px, right-aligned), revenue and gross profit on two lines.
+- **% sign hard against an input box** (Reconomy). Give a unit after an input its own span with a 6px left margin.

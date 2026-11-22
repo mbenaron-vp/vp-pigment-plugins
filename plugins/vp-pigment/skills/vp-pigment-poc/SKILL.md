@@ -23,12 +23,13 @@ The bar:
 | File | Read before |
 |---|---|
 | `references/boards.md` | Creating or changing any board or view: grid units, widths, metric names, drafts and repointing, colour, nav, Home board |
-| `references/frames.md` | Building or changing a frame: Pigment limits, SDK patterns, explain panel, tour, local testing |
+| `references/frames.md` | Building or changing a frame: Pigment limits, SDK patterns, explain panel, tour, submission and return workflow, local testing |
 | `references/demo-script.md` | Writing the demo script: Part 1 model explainer and Part 2 click path |
 | `references/testing.md` | The test pass and the browser check |
 | `assets/frame-test-harness.html`, `assets/serve.ps1` | Testing a frame locally without Python |
 | `assets/examples/frame-build-kit/` | Building a frame with Python: build script with Pigment's safe-code lint, mock SDK, design page for an Artifact, pull and deploy scripts |
-| `assets/examples/trust-payments-spm-cockpit/` | A complete house-standard frame to copy from |
+| `assets/examples/reconomy-cockpit/` | The newest house-standard cockpit: branded design, submission and return workflow, process graphic, action bar. Its README says which functions to lift |
+| `assets/examples/trust-payments-spm-cockpit/` | An earlier complete frame to copy from |
 
 ## Two modes
 
@@ -69,7 +70,8 @@ These are the house standard. Read their actual code with `search_frames` (by `i
 
 | Reference | App ID | Frame / board ID | What to take from it |
 |---|---|---|---|
-| Trust Payments SPM Cockpit | `b0581029-8cce-4c63-910a-92b79aae7b6b` | frame `7f5f1f7a-c053-4200-969c-5b8423367541` (source in `assets/examples/`) | Newest standard: 4-step rail, click-to-explain drawer with Back stack, subscriptions kept under 10, write sinks, Reset, tour |
+| Reconomy cockpit (Nov 2026) | `0e12a5ce-8b90-48b5-9fb0-c786e53c76ad` | frame `1effe5ba-b3f8-4500-b168-d4e5b8835f1f` (source in `assets/examples/reconomy-cockpit/`) | Newest standard: designed with Mike in an Artifact; status strip and return reasons on every step, submit pop-up that locks submitted businesses, action bar, sign-off process graphic |
+| Trust Payments SPM Cockpit | `b0581029-8cce-4c63-910a-92b79aae7b6b` | frame `7f5f1f7a-c053-4200-969c-5b8423367541` (source in `assets/examples/`) | Earlier standard: 4-step rail, click-to-explain drawer with Back stack, subscriptions kept under 10, write sinks, Reset, tour |
 | Trust Payments SPM boards and demo script | same app | boards SPM 0-4 | Part 1 explainer tables, colour scales, whole-pound merchant grids |
 | Benchmark Capital cost envelope | `8fa6e9c8-6474-416a-bfd5-883edf335ee2` | boards 00-06 | Board sizing and widths done properly; weekly versions; waterfall and bridge; approval impact |
 | FRP Budget Round | `f33d2027-5f81-4177-9612-06cc6df08e5a` | frame `49bebf31-4523-4cf5-ae69-8346c2425d2b` | Readable frame template: levers that write, monthly impact against baseline, commentary, submit/approve |
