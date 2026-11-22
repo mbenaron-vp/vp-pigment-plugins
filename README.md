@@ -56,5 +56,6 @@ plugins/vp-pigment/
     assets/
       frame-test-harness.html  mock Pigment SDK page for testing a frame locally
       serve.ps1                tiny local web server (no Node or Python needed)
+      examples/frame-build-kit/             Python build script, mock SDK and harness for a frame
       examples/trust-payments-spm-cockpit/  a full house-standard frame
 ```
