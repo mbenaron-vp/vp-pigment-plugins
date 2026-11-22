@@ -80,7 +80,7 @@ def ascii_escape(text):
 
 
 def stored_bytes(body):
-    """The bodySizeBytes Pigment reports: it stores each non-ASCII \\uXXXX escape as the real character."""
+    """The bodySizeBytes Pigment reports: each non-ASCII \\uXXXX escape arrives as the real character."""
     pair = re.compile(r'\\u(d[89ab][0-9a-f]{2})\\u(d[c-f][0-9a-f]{2})', re.I)
     s = pair.sub(lambda m: chr(0x10000 + ((int(m.group(1), 16) - 0xD800) << 10)
                                + (int(m.group(2), 16) - 0xDC00)), body)
