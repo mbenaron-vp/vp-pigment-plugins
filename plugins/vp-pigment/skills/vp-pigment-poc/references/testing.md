@@ -28,6 +28,8 @@ Report results as a short pass/fail table with the fixes made, and write it into
    - 10 or fewer subscriptions
    - the error strip is empty
    - the frame is not private
+   - the body passes the build kit's `lint_frame` (Pigment's safe-code rules), and the live `bodySizeBytes` equals the local body's byte size
+   - Mike has approved the design page, and `deploy_edits.py` shows 0 edits between the live body and the approved build
 6. **Explain and tour:** every explain key referenced in the frame exists in `story.json`, every tour target id exists in the frame, and every operand link resolves.
 7. **Navigation:** every button on every board goes to the right place, and Guide opens the frame.
 8. **Layout:** `get_board` on every board: no overlaps, 12 or fewer columns per row, symmetrical pairs, heights from boards.md.

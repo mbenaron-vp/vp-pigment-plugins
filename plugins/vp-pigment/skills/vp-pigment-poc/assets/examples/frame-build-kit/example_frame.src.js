@@ -30,7 +30,7 @@
   function copyRows(a) { return a.map(function (r) { var o = {}; for (var k in r) o[k] = r[k]; return o; }); }
   function row(region) { return S.rows.filter(function (r) { return r.region === region; })[0]; }
 
-  // ---------- style (defined before anything can render) ----------
+  // ---------- styles (defined before anything can render; all CSS lives here) ----------
   var CSS = '.wrap{font-family:Inter,"Segoe UI",system-ui,sans-serif;color:' + C.ink + ';padding:20px;max-width:1200px;margin:0 auto}' +
     'header{display:flex;justify-content:space-between;align-items:center}h1{font-size:22px;color:' + C.navy + '}h2{font-size:16px;margin:0 0 12px}' +
     '.kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:12px 0}.tile,.card{background:#fff;border:1px solid ' + C.line + ';border-radius:16px;padding:16px}' +

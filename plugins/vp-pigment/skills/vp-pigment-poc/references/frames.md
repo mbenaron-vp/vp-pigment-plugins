@@ -16,7 +16,7 @@ Start from a reference and copy its structure; don't reinvent it:
   - for a frame with many screens (FRP cockpit: 35 sources, 13 screens), keep a few global sources, and subscribe each screen's sources only while that screen is open: unsubscribe them when the step changes
 - **A data source cannot mix value types.** A text or dimension list property and numeric metrics need separate sources.
 - **`update_frame` replaces the frame wholesale** and needs the full body, so changing data sources or bindings costs a full resend. `update_frame_body` find-and-replace is cheap for code-only fixes. Get the data sources right first time.
-- **The frame's browser storage appears blocked inside Pigment**, so the localStorage "tour seen" check treats the tour as seen and it doesn't auto-start. The Guide button works; tell the presenter to use it.
+- **No storage.** Storage APIs (localStorage, sessionStorage, IndexedDB, cookies) are blocked in the sandbox and banned by Pigment's safe-code rules, so a frame remembers nothing between visits: no "tour seen" flag. The tour starts from the Guide button; tell the presenter to use it.
 - Frames are created **private** and the MCP has no field to change it. Mike must untick private in Pigment before anyone else opens it. **`update_frame` (full replace) sets the frame back to private and starts a new draft**, even after Mike has published and unticked it: tell him to publish and untick again. `update_frame_body` also starts a draft but keeps the private setting.
 - Pigment asks the user for **permission the first time a frame writes**. Claude can't approve it, so frame writes are only proven once a person has clicked through. The presenter should choose "For this session" at the first Apply; otherwise it asks again for every cell.
 
@@ -79,7 +79,7 @@ The explain text should match Part 1 of the demo script; both come from `story.j
 - A "? Guide" button, always visible top-right, in a navy-to-Sid-Blue gradient.
 - Tour steps come from `story.json` (target element id, title, body).
 - Use a spotlight cut-out with a pulsing outline and a card with Next, Back, Skip and "n of N".
-- Auto-start once per browser after data has loaded, using a versioned localStorage key (`<client>_<frame>_tour_seen_v1`) wrapped in try/catch. Inside Pigment this usually won't fire (storage blocked), so the Guide button is the real entry point.
+- No auto-start. A frame can't store a "tour seen" flag (storage is banned), and inside Pigment the tour never auto-started anyway. The Guide button is the only way in.
 - Esc must close the tour. Test it; it has failed before.
 - At least one step tells the viewer to do something specific ("Take the Mid-Market multiple to 5.5x") and what to watch.
 
@@ -92,7 +92,8 @@ The explain text should match Part 1 of the demo script; both come from `story.j
 
 ## Style
 
-- Font stack: `Inter, "Segoe UI", system-ui, sans-serif`.
+- Font stack: `Inter, "Segoe UI", system-ui, sans-serif`. System fonts only: a frame can't load web fonts, so Inter shows only where it is installed.
+- A light theme, with all CSS in the frame body (Pigment's frame rules).
 - VP palette mapped into a single `C = {...}` colour object.
 - Rounded cards (16-20px), tabular numbers, soft borders `#e2e8f0`.
 - Responsive: switch layout below about 760px and shrink chart padding below about 620px.
@@ -103,7 +104,7 @@ The explain text should match Part 1 of the demo script; both come from `story.j
 - Keep readable source in the client folder (`specs/<client>/frames/<name>.js`) with its config JSON. The source is the master copy; the frame in Pigment is a deployment.
 - The body is sent in full as a tool argument, so size is tokens: two 50 KB frames cost about 50k output tokens. Don't minify: Pigment's safe-code rules forbid minified frame code.
 - **A body over about 20 KB:** create the frame with unique placeholder lines (`//P1`, `//P2`, ...), then replace each with `update_frame_body` in chunks under 20,000 characters, split on line boundaries. Compare the returned `bodySizeBytes` with the local file's byte size to confirm nothing was lost.
-- **Escaped characters make the live body smaller.** If the build escapes non-ASCII characters (`\u00a3` for £), the body Pigment stores has the real characters instead. The escapes are converted on the way in, possibly before Pigment sees them: Claude's tool calls also turn `\u` escapes in their arguments into characters. The frame still works, but `bodySizeBytes` is smaller than the local file: each 6-byte escape becomes a 2-byte (£, ×) or 3-byte (€, the en dash) UTF-8 character. Subtract that saving before comparing (Reconomy, Nov 2026: local 86,032 bytes, live 85,930, 102 bytes saved by the £ and € escapes). The build kit in `assets/examples/frame-build-kit/` prints the size to expect.
+- **Keep non-ASCII characters as real UTF-8; never escape them.** Pigment's safe-code rules ban `\u` and `\x` escapes, so £, €, × and the en dash go into the body as the characters themselves. The live `bodySizeBytes` then equals the local file's UTF-8 byte size exactly (Reconomy, Nov 2026: 85,606 bytes both). This replaces the earlier advice to escape them and subtract the byte saving.
 - After `create_frame`, read it back with `search_frames` and compare it with the local file. Small fixes go through `update_frame_body` find-and-replace; mirror them in the local file.
 
 ## Testing a frame locally
@@ -130,16 +131,18 @@ Where Python is available (`py -3.12` on Mike's machine since Nov 2026), build t
 | File | What it is |
 |---|---|
 | `<name>.src.js` | The readable source, the master copy. It holds `var STORY = /*STORY_JSON*/{};` where the story text goes, and may use £, € and other characters directly. |
-| `build_frame.py` | Run with `py -3.12 -I build_frame.py`. Writes the three files below and stops on any check that fails. |
-| `<name>.js` | The deployed body: the source with `story.json` (only the keys the frame reads, such as `explain` and `tour`) inlined at the placeholder and every non-ASCII character escaped to `\uXXXX`, so the body is pure ASCII. |
+| `build_frame.py` | Run with `py -3.12 -I build_frame.py`. Writes the four files below and stops, writing nothing, on any check that fails. |
+| `<name>.js` | The deployed body: the source with `story.json` (only the keys the frame reads, such as `explain` and `tour`) inlined at the placeholder, as real UTF-8 with no escapes. |
 | `<name>_config.json` | Bindings, data sources and sinks for `create_frame`, generated from the lists in the script so the names can't drift. |
+| `design.html` | The artifact-ready design page (see "Design in an Artifact, deploy to the frame"). |
+| `harness.html` | The design page in a full HTML skeleton. It runs from `file://` in the browser pane with no server, as long as it is inside the session's project folder (the pane only shows a static snapshot of local files elsewhere; serve those with `serve.ps1`). |
 | `mock_sdk.js` | A mock `PigmentSDK` (below). |
-| `harness.html` | The mock SDK and the deployed body inlined into one page. It runs from `file://` in the browser pane with no server, as long as it is inside the session's project folder (the pane only shows a static snapshot of local files elsewhere; serve those with `serve.ps1`). |
+| `pull_design.py`, `deploy_edits.py` | Bring a restyled design page back, and deploy only the changed lines (see the next section). |
 
 What the build script checks before writing anything:
-- the placeholder was replaced and the body encodes as ASCII
+- the placeholder was replaced, and the body passes `lint_frame`, a line-by-line check against Pigment's safe-code rules. It blocks fetch, XHR and WebSocket; storage APIs, `@import` and `url()`; postMessage and `window.top`/`parent`; eval, `new Function`, dynamic import and `document.write`; `location`, external URLs, `\u`/`\x` escapes, `atob`/`fromCharCode`, `<script` in markup, `javascript:` and Workers; and inline `on*=` handlers, `history.pushState`, string timers and `Proxy`/`Reflect`. `--no-lint` exists only to rebuild an old deployed baseline that predates the lint.
 - every data source name and every sink name in the config appears in the body as a quoted string, so a renamed source fails the build, not the live frame
-- it prints the body's byte size, the size Pigment will report once it stores the escapes as real characters (see "Delivering through the MCP"), and the source, sink and binding counts
+- it prints the body's UTF-8 byte size, which is the `bodySizeBytes` to expect, and the source, sink and binding counts
 
 What the mock SDK does:
 - **One data generator per source**, computed from a small in-memory input state that the sinks write to, so a lever visibly moves the numbers it should.
@@ -150,6 +153,53 @@ What the mock SDK does:
 Drive the harness with JavaScript from the browser pane at 1400px and 420px: open every step, check `window.__errors` is empty and `window.__maxSubs` is 10 or fewer, open and close the explain drawer (Back, Esc), step through the tour (Esc), move every lever, refuse a write, Reset and check every original comes back in `window.__writes`.
 
 **SVG elements have no `.click()`.** A scripted `el.click()` on a chart bar or point throws a TypeError (`el.click is not a function`). Use `el.dispatchEvent(new MouseEvent('click', { bubbles: true }))`, which also reaches a click handler delegated on `#app`.
+
+## Design in an Artifact, deploy to the frame (Mike, Reconomy 22 Nov 2026)
+
+Mike gets the look he wants by working in claude.ai artifacts. So instead of describing a design for Claude to copy, he restyles the frame's own design page, and Claude deploys exactly what he approved. Uses the build kit in `assets/examples/frame-build-kit/`.
+
+### 1. Publish the design page
+
+- `build_frame.py` writes `design.html`: an artifact-ready page with a `<title>` ("<frame name> design"), the mock SDK in `<script id="mock-sdk">` and the real frame body in `<script id="frame-body">`. What Mike sees is the frame's real code running on mock data, not a mock-up.
+- Publish it with the Artifact tool (private) and give Mike the link. Republish the same file to keep the same link.
+- The page stays light even though artifacts usually follow dark mode: frames use a light theme.
+
+### 2. Mike restyles it
+
+- He changes it in claude.ai: colours, spacing, cards, charts. The changes land in the frame-body block's styles section and render strings.
+- If he makes a free-form design artifact instead (his own page, not the design page), read it with the Artifact tool, port the look into the frame's styles and render strings by hand, rebuild, and republish the design page for his approval.
+
+Rules the design must keep (Pigment's frame rules: `pigment:building-pigment-frames`, "Sandboxed runtime" and "Writing safe Frame code"):
+- system fonts only: no Google Fonts, `@import` or CSS `url()`
+- inline SVG for icons and images; no libraries or CDNs; no storage APIs
+- a light theme
+- all CSS inside the frame body's styles section: a `<style>` on the page does not deploy
+- keep element ids, `data-*` attributes, the SDK calls and the data source and sink names
+
+### 3. Pull it back
+
+1. Save the page: Artifact tool, action `read`, `path` `index.html`. The result says where the file was saved.
+2. Run `py -3.12 -I pull_design.py <saved file>`. It:
+   - takes the **last** `<script id="frame-body">` block on the page. The page's comment names the tag too, and taking the first match picked up the wrong text once.
+   - runs `lint_frame` and stops if the design broke a rule (fix it in the artifact first)
+   - puts the explain and tour text back into `story.json`, and rewrites `<name>.src.js` with the `/*STORY_JSON*/{}` placeholder
+   - writes `last_pull.diff`. Read it before going on: it shows exactly what the design changed.
+
+### 4. Deploy only what changed
+
+1. Run `build_frame.py`, then test `harness.html` (the checks above).
+2. Run `py -3.12 -I deploy_edits.py`. It diffs `deployed.js` (an exact copy of the live body) against the new body and writes `deploy_edits.json`:
+   - one edit per changed hunk, with context added until each `oldString` is unique in the live body
+   - simulated in order before it is written, each string under 19,000 characters (the tool's limit is 20,000)
+   - it prints the `bodySizeBytes` to expect
+3. Send the file's contents as the `edits` of one `update_frame_body` call. The call is all or nothing: if one edit doesn't match, nothing changes.
+4. Once Pigment's `bodySizeBytes` matches, run `py -3.12 -I deploy_edits.py --deployed` so `deployed.js` follows the live body. Start `deployed.js` the same way right after `create_frame`, once `search_frames` shows the expected size.
+5. `update_frame_body` starts a new draft, so Mike publishes again.
+
+Evidence from Reconomy (22 Nov 2026):
+- artifact to source to build was byte-identical, with 0 edits
+- a restyle dry run (accent colour and card radius) became 2 edits of 2,032 characters instead of an 86 KB resend
+- the storage fix went live as 3 edits, and the live size matched the local file exactly (85,606 bytes)
 
 
 ## Drill everywhere (Mike, FRP 17 Nov 2026)

@@ -27,7 +27,7 @@ The bar:
 | `references/demo-script.md` | Writing the demo script: Part 1 model explainer and Part 2 click path |
 | `references/testing.md` | The test pass and the browser check |
 | `assets/frame-test-harness.html`, `assets/serve.ps1` | Testing a frame locally without Python |
-| `assets/examples/frame-build-kit/` | Building a frame with Python: build script, mock SDK, self-contained harness |
+| `assets/examples/frame-build-kit/` | Building a frame with Python: build script with Pigment's safe-code lint, mock SDK, design page for an Artifact, pull and deploy scripts |
 | `assets/examples/trust-payments-spm-cockpit/` | A complete house-standard frame to copy from |
 
 ## Two modes
@@ -304,7 +304,8 @@ Read `references/boards.md` first. In short:
 Read `references/frames.md` first. Every POC gets one. Key points:
 - Copy the Trust Payments SPM Cockpit structure.
 - Keep to 10 or fewer live subscriptions and no mixed value types in a source.
-- Test locally with the harness before sending. Where Python is available, build the body, config and harness with `assets/examples/frame-build-kit/`.
+- Test locally with the harness before sending. Where Python is available, build the body, config and harness with `assets/examples/frame-build-kit/`; the build refuses a body that breaks Pigment's safe-code rules.
+- **Design in an Artifact** (Mike, Nov 2026): publish the kit's `design.html` (the frame's real code on mock data) as a private Artifact and give Mike the link. He restyles it in claude.ai; pull it back with `pull_design.py` and deploy only the changed lines with `deploy_edits.py` (`references/frames.md`, "Design in an Artifact, deploy to the frame").
 - The frame is private until Mike unticks it, and the first write asks permission.
 
 ### Phase 5 - Test pass
@@ -401,6 +402,7 @@ Give Mike a short chat summary: the click path in one line per screen, what wasn
 - Home has the client logo and a card for every board in the story
 - No orphan metrics or assumptions; every view saved and every widget pointing at the saved view; boards and frame open on the story's opening case
 - The frame has click-to-explain on every number and driver tile, a guided tour with Skip and Esc, write-back with reset, and is not private
+- Mike has approved the design page, and the live frame matches the approved build (lint clean, `deploy_edits.py` shows 0 edits)
 - Real data is reconciled against the named source file, illustrative data is labelled, and template leftovers are gone
 - The test pass table is green, or each exception is explained
 - `demo-script.md` has Part 1 (model explainer, every element) and Part 2 (tested click path, reset table), and `build-spec.md` is current
