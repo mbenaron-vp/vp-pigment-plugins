@@ -1,6 +1,6 @@
 # The cockpit frame (house standard)
 
-Frames are the optional finale, built after the boards work. Every POC gets one without being asked. Every number and input in a frame reads from or writes to the same metrics the boards use, so the frame never holds logic of its own.
+Frames are the optional finale, built after the boards work. Every POC gets the frame set without being asked (see "The POC frame set"). Every number and input in a frame reads from or writes to the same metrics the boards use, so the frame never holds logic of its own.
 
 The cockpit walks the user through their process step by step, with filters, a Guide button that highlights each area in turn, and the levers for the story. A reporting frame (board pack) follows the same rules.
 
@@ -262,6 +262,73 @@ In the frame, comment, owner and return reason are one text source (same value t
 
 - Add Return reason to the sign-off panels and the review grid.
 - **Build a new view fully configured (values, widths, formatting, filters) before it goes on any board, then repoint the widgets.** Any edit after that forks a draft, even on a view you created minutes earlier, and `save_draft_views` needs Mike's confirmation. If that happens, leave the draft and build the view again.
+
+## The POC frame set (Mike, Reconomy 22 Nov 2026)
+
+One cockpit is the minimum. Mike wants a **set of frames per POC**, each in the client's branding, to start conversations:
+
+| Frame | Who it's for | What it does | Example |
+|---|---|---|---|
+| Cockpit | The business finance lead | The guided submit journey: drivers, status strip, return reasons, action bar | `assets/examples/reconomy-cockpit/` |
+| Review inbox | The group reviewer | Email-style three panes: folders by status, a thread per submission, the figures behind it, Approve or Return with a reason | `assets/examples/reconomy-inbox/` |
+| CFO story | The CFO and the board | Prezi-style zooming story on one map, every number and sentence from live data | `assets/examples/reconomy-cfo-story/` |
+| Signature 3D view | Everyone, as the wow moment | A 3D way into the data, chosen laterally from the client's business | `assets/examples/reconomy-world/` |
+
+**Branding per customer.** Each frame starts with a `BRAND` block: name, title, palette, font stack, logo SVG, series colours and labels. A frame for a new customer is that block, a `CFG` block (version names, actuals-to month, stage names) and the bindings. Everything else comes from data.
+
+**Design each one in an Artifact first** ("Design in an Artifact, deploy to the frame" above), and deploy only when Mike says "send it".
+
+### Review inbox
+
+- **Left rail:** folders with counts (Needs review = Submitted, Returned, Approved, Not submitted yet, All), stage chips and a round-progress bar.
+- **Middle list:** one row per business × stage that applies: initials avatar coloured by division, status chip, owner, note snippet, unread dot on Submitted.
+- **Reading pane:**
+  - the conversation as bubbles: the business's note, then the group's earlier return reason;
+  - "What is in it": the figures for that stage, with a one-line insight written from them;
+  - the same business across the round, and a grid of the whole round.
+- **Actions:**
+  - Approve.
+  - Return, through an inline composer with reason starters; the reason is required.
+  - Items that can't be actioned say why.
+  - Keys: J/K move, A approves, R returns, / searches, Esc closes.
+- **Writes:** status and return reason only, never the business's comment. Use queued writes and Reset, as the cockpit does.
+- **When the queue is empty:** an "Inbox zero" screen.
+
+### CFO story (Prezi-style)
+
+Mike's test: "a Prezi kind of zooms into itself cleverly rather than zooming in and out of just slides".
+- **The overview is one picture of the whole story** (Reconomy: their loop drawn as a ring in three coloured arcs, the headline at the centre, six topic circles on the ring, each showing a live miniature of its slide).
+- **Each next view lives inside an element of the current one**, in a small "portal" circle: the EBITDA hero tile holds the FY26 bridge, the bridge's biggest variance bar holds month by month, "Two engines" holds one circle per engine, the biggest scheme bar holds the line-by-line pass-through, and the readiness ring holds "Returned, and why". A topic can be on the ring or inside a tile, not both: decide where each one lives before building.
+- **Measure child positions from the rendered portal elements** on each render, not from hand-placed coordinates, so a slide's own layout decides where its children sit. Account for parent borders: an unaccounted border left a nested slide 8px off.
+- **Camera path:** zoom out only as far as the common parent, then dive into the next target, with an ease that pulls back a little mid-flight. Pulse the element you're about to enter, fade the parent while deep, and show a breadcrumb (Overview › Against budget › Month by month).
+- **Controls:** arrows, Space, click to dive, Esc or Backspace goes up a level, O shows the overview, N shows a talk track written from live numbers. With reduced motion, cut instead of flying.
+- **Rendering:**
+  - Build slide content at a fixed 1280×720 and scale it with a CSS transform on the world, so text stays sharp. Charts are inline SVG at design size.
+  - Keep any accent line inside the card's rounded corners: a full-width strip on a rounded card looks clipped.
+- **Read only.** The decisions slide is generated from the data: the worst variance, absorbed cost, returned stages, FX exposure.
+
+### Signature 3D view: think laterally per POC
+
+Don't default to a map. Mike: "it can be anything really that allows you to interface with the data in a fun, 3D capacity... think laterally for each opportunity". Before building, offer Mike three metaphors drawn from the client's business and pick one together:
+- payments: the card or terminal exploded into layers you zoom into (interchange, scheme fees, merchant pricing), or a network of transactions
+- recycling or circular economy: a loop that material flows round, with stations per division and leaks for absorbed cost
+- SaaS: a city of customers (height ARR, colour churn risk)
+- manufacturing: the line as a 3D conveyor; retail or hospitality: the floor plan
+- professional services: a skyline of offices and teams with utilisation as lit windows
+- construction or property: the building, floor by floor
+- a globe only when the model really is by country (Reconomy: Entity.Country, Scheme.Country)
+
+How the Reconomy globe is built, reusable for any model with a Country property:
+- **Rendering:** canvas 2D with its own 3D maths, no libraries. Orthographic projection, dot-matrix continents sampled from coarse reference polygons (a finer set builds lazily on zoom), graticule, atmosphere glow, devicePixelRatio aware, requestAnimationFrame stopped in cleanup.
+- **Geography:** the frame reads Country from list data sources. Only reference geography lives in code: a country and region centroid table, with "Worldwide" drawn as an orbit and anything it can't place listed as "Not on the map".
+- **Data:** one column per business, height by a chosen measure, coloured by division. Scheme pins, a regional ring and arcs from the hub country.
+- **Interaction:** click to fly to a business with a side panel; a tour with captions written from the numbers; a flat map below 700px wide.
+
+### Building and deploying several frames at once
+
+- **Build in parallel:** one forked agent per frame, each in its own folder (`frames/<name>/`) with its own copied mock SDK and build script (importing `lint_frame` from the shared one). Each uses its own browser-pane and Chrome tabs, because siblings share the pane, and publishes its own private Artifact.
+- **Look up list-property technical names** for ListProperty bindings with `get_list_items` and `extraPropertyFriendlyNames`: the response's `columns[].technicalName` holds them (e.g. `_loop_17PFVA`, `country_Z2FTY4`). `search_metrics_and_lists` doesn't return them.
+- **Deploy with fresh general-purpose agents, one per frame.** First run `assets/examples/frame-build-kit/split_chunks.py <body.js> <out>`: it writes ~15k-character chunks, a marker placeholder and `expected.json` (the running `bodySizeBytes` after each chunk, plus the SHA-256). Each agent then runs `create_frame` with the placeholder and the config, fills each chunk, and stops to fix any size mismatch before going on. Finish with the hash check from the frame editor's code view.
 
 ## Drill everywhere (Mike, FRP 17 Nov 2026)
 

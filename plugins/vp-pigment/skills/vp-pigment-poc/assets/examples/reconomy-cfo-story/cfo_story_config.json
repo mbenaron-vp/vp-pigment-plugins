@@ -1,0 +1,346 @@
+{
+ "name": "Reconomy CFO story",
+ "bindings": [
+  {
+   "type": "List",
+   "name": "versionList",
+   "listId": "7237b9e3-c111-4989-9813-67a2b34be6df"
+  },
+  {
+   "type": "List",
+   "name": "monthList",
+   "listId": "2cb7e6db-e257-48f3-8e47-783adeee3082"
+  },
+  {
+   "type": "List",
+   "name": "schemeList",
+   "listId": "401c68e6-5838-4006-9d52-96fc187b72e9"
+  },
+  {
+   "type": "List",
+   "name": "lineList",
+   "listId": "31e98cf8-0555-4edc-87e5-2fe98738149f"
+  },
+  {
+   "type": "List",
+   "name": "sectorList",
+   "listId": "80f19255-3af4-4a7a-88c0-f796c7120a1f"
+  },
+  {
+   "type": "List",
+   "name": "currencyList",
+   "listId": "b90df34d-1588-455c-98ae-376308ed3ff1"
+  },
+  {
+   "type": "List",
+   "name": "plLineList",
+   "listId": "5f4546e3-5ea8-4d57-9f05-c572e540ba28"
+  },
+  {
+   "type": "List",
+   "name": "entityList",
+   "listId": "fb8eebb9-af77-4fef-a6be-c363c6efa4e4"
+  },
+  {
+   "type": "List",
+   "name": "stageList",
+   "listId": "968faf24-d0e6-4b6d-be89-bfc3dd15cd32"
+  },
+  {
+   "type": "ListProperty",
+   "name": "entLoop",
+   "listId": "fb8eebb9-af77-4fef-a6be-c363c6efa4e4",
+   "listPropertyTechnicalName": "_loop_17PFVA"
+  },
+  {
+   "type": "ListProperty",
+   "name": "entCurrency",
+   "listId": "fb8eebb9-af77-4fef-a6be-c363c6efa4e4",
+   "listPropertyTechnicalName": "currency_FPXSRL"
+  },
+  {
+   "type": "Metric",
+   "name": "mPLR12",
+   "metricId": "32222d3b-d04e-4091-86c8-86f04afa04d0"
+  },
+  {
+   "type": "Metric",
+   "name": "mCsRevR12",
+   "metricId": "8c26b5a5-a963-4633-b730-fb693ebda278"
+  },
+  {
+   "type": "Metric",
+   "name": "mCsGpR12",
+   "metricId": "34444823-22bf-4948-b1ab-158fa1e437cd"
+  },
+  {
+   "type": "Metric",
+   "name": "mCsBasis",
+   "metricId": "968ee2ab-6fbe-4538-b3dc-282225944fa5"
+  },
+  {
+   "type": "Metric",
+   "name": "mMsRevR12",
+   "metricId": "cabe83df-837f-4191-97f9-f8ab72ba42b5"
+  },
+  {
+   "type": "Metric",
+   "name": "mMsGpR12",
+   "metricId": "f0039da3-fc7f-4d4b-bb27-caf9a23fa7e5"
+  },
+  {
+   "type": "Metric",
+   "name": "mMsIncR12",
+   "metricId": "657d85c0-dbe5-404b-89e9-7b2831a19415"
+  },
+  {
+   "type": "Metric",
+   "name": "mMsRecR12",
+   "metricId": "9324581a-7766-479e-a5bd-f3a744527267"
+  },
+  {
+   "type": "Metric",
+   "name": "mMsPass",
+   "metricId": "c7c76193-e635-43c3-8be4-3471f7091659"
+  },
+  {
+   "type": "Metric",
+   "name": "mMgmtPL",
+   "metricId": "37383c3b-185b-48b2-8f4c-afb8690045e0"
+  },
+  {
+   "type": "Metric",
+   "name": "mFx",
+   "metricId": "460ef88a-2ef9-4a71-8603-f8ecb51cf3a7"
+  },
+  {
+   "type": "Metric",
+   "name": "mWfStatus",
+   "metricId": "fea9d168-7762-4dd0-837f-7231f604ff9d"
+  },
+  {
+   "type": "Metric",
+   "name": "mWfComment",
+   "metricId": "fc838987-d786-4e58-8b05-8579f88e3017"
+  },
+  {
+   "type": "Metric",
+   "name": "mWfOwner",
+   "metricId": "53d6b17a-e34f-4499-b274-97048e67b5f0"
+  },
+  {
+   "type": "Metric",
+   "name": "mWfReturn",
+   "metricId": "6e69bdbb-bb9f-44b7-87bb-c90ef80f0a05"
+  }
+ ],
+ "dataSources": [
+  {
+   "name": "dsEnt",
+   "labels": [
+    {
+     "binding": "entityList"
+    },
+    {
+     "binding": "plLineList"
+    },
+    {
+     "binding": "versionList"
+    }
+   ],
+   "selectors": [
+    {
+     "binding": "versionList"
+    }
+   ],
+   "values": [
+    {
+     "binding": "mPLR12"
+    }
+   ]
+  },
+  {
+   "name": "dsPLM",
+   "labels": [
+    {
+     "binding": "monthList"
+    },
+    {
+     "binding": "plLineList"
+    },
+    {
+     "binding": "versionList"
+    }
+   ],
+   "selectors": [
+    {
+     "binding": "versionList"
+    },
+    {
+     "binding": "monthList"
+    }
+   ],
+   "values": [
+    {
+     "binding": "mMgmtPL"
+    }
+   ]
+  },
+  {
+   "name": "dsCS",
+   "labels": [
+    {
+     "binding": "schemeList"
+    },
+    {
+     "binding": "lineList"
+    },
+    {
+     "binding": "versionList"
+    }
+   ],
+   "selectors": [
+    {
+     "binding": "versionList"
+    }
+   ],
+   "values": [
+    {
+     "binding": "mCsRevR12"
+    },
+    {
+     "binding": "mCsGpR12"
+    }
+   ]
+  },
+  {
+   "name": "dsCSB",
+   "labels": [
+    {
+     "binding": "schemeList"
+    },
+    {
+     "binding": "lineList"
+    }
+   ],
+   "selectors": [],
+   "values": [
+    {
+     "binding": "mCsBasis"
+    }
+   ]
+  },
+  {
+   "name": "dsMS",
+   "labels": [
+    {
+     "binding": "sectorList"
+    },
+    {
+     "binding": "versionList"
+    }
+   ],
+   "selectors": [
+    {
+     "binding": "versionList"
+    }
+   ],
+   "values": [
+    {
+     "binding": "mMsRevR12"
+    },
+    {
+     "binding": "mMsGpR12"
+    },
+    {
+     "binding": "mMsIncR12"
+    },
+    {
+     "binding": "mMsRecR12"
+    },
+    {
+     "binding": "mMsPass"
+    }
+   ]
+  },
+  {
+   "name": "dsFX",
+   "labels": [
+    {
+     "binding": "currencyList"
+    },
+    {
+     "binding": "versionList"
+    }
+   ],
+   "selectors": [
+    {
+     "binding": "versionList"
+    }
+   ],
+   "values": [
+    {
+     "binding": "mFx"
+    }
+   ]
+  },
+  {
+   "name": "dsWFS",
+   "labels": [
+    {
+     "binding": "entityList"
+    },
+    {
+     "binding": "stageList"
+    }
+   ],
+   "selectors": [],
+   "values": [
+    {
+     "binding": "mWfStatus"
+    }
+   ]
+  },
+  {
+   "name": "dsWFC",
+   "labels": [
+    {
+     "binding": "entityList"
+    },
+    {
+     "binding": "stageList"
+    }
+   ],
+   "selectors": [],
+   "values": [
+    {
+     "binding": "mWfComment"
+    },
+    {
+     "binding": "mWfOwner"
+    },
+    {
+     "binding": "mWfReturn"
+    }
+   ]
+  },
+  {
+   "name": "dsEntP",
+   "labels": [
+    {
+     "binding": "entityList"
+    }
+   ],
+   "selectors": [],
+   "values": [
+    {
+     "binding": "entLoop"
+    },
+    {
+     "binding": "entCurrency"
+    }
+   ]
+  }
+ ],
+ "dataSinks": []
+}

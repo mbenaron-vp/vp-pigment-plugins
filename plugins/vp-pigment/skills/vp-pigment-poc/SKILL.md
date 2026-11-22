@@ -9,7 +9,7 @@ Builds a Pigment demo or POC app for a named prospect. It sits on top of Pigment
 
 - the client story
 - the VantagePoint look
-- a guided cockpit frame with click-to-explain
+- a set of branded frames: a guided cockpit with click-to-explain, a review inbox, a zooming CFO story and a signature 3D view chosen for the client
 - a demo script that teaches Mike the model, then the clicks
 - the test pass
 
@@ -29,6 +29,9 @@ The bar:
 | `assets/frame-test-harness.html`, `assets/serve.ps1` | Testing a frame locally without Python |
 | `assets/examples/frame-build-kit/` | Building a frame with Python: build script with Pigment's safe-code lint, mock SDK, design page for an Artifact, pull and deploy scripts |
 | `assets/examples/reconomy-cockpit/` | The newest house-standard cockpit: branded design, submission and return workflow, process graphic, action bar. Its README says which functions to lift |
+| `assets/examples/reconomy-inbox/` | Review inbox: email-style approve or return with a reason |
+| `assets/examples/reconomy-cfo-story/` | CFO story: Prezi-style nested zoom over live numbers |
+| `assets/examples/reconomy-world/` | Signature 3D view, here a canvas globe driven by the model's Country properties |
 | `assets/examples/trust-payments-spm-cockpit/` | An earlier complete frame to copy from |
 
 ## Two modes
@@ -301,10 +304,10 @@ Read `references/boards.md` first. In short:
 
 **Build boards from a generator.** Keep the widget JSON per board (or a small generator with `nav`, `header`, `card`, `view`, `signoff`) in the client folder. Every board then has the same nav bar and sign-off area, and a re-layout doesn't mean re-reading every board.
 
-### Phase 4b - Cockpit frame
+### Phase 4b - Frames
 
-Read `references/frames.md` first. Every POC gets one. Key points:
-- Copy the Trust Payments SPM Cockpit structure.
+Read `references/frames.md` first. Every POC gets the frame set ("The POC frame set"): the cockpit, a review inbox, a zooming CFO story and a signature 3D view, each with a `BRAND` block for the client. For the 3D view, offer Mike three metaphors drawn from the client's business before building; don't default to a map. Key points:
+- Start from the Reconomy examples (`assets/examples/reconomy-*`); the cockpit's README says which functions to lift.
 - Keep to 10 or fewer live subscriptions and no mixed value types in a source.
 - Test locally with the harness before sending. Where Python is available, build the body, config and harness with `assets/examples/frame-build-kit/`; the build refuses a body that breaks Pigment's safe-code rules.
 - **Design in an Artifact** (Mike, Nov 2026): publish the kit's `design.html` (the frame's real code on mock data) as a private Artifact and give Mike the link. He restyles it in claude.ai; pull it back with `pull_design.py` and deploy only the changed lines with `deploy_edits.py` (`references/frames.md`, "Design in an Artifact, deploy to the frame").
