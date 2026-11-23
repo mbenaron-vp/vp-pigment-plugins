@@ -203,6 +203,8 @@ Rules the design must keep (Pigment's frame rules: `pigment:building-pigment-fra
    - simulated in order before it is written, each string under 19,000 characters (the tool's limit is 20,000)
    - it prints the `bodySizeBytes` to expect
 3. Send the file's contents as the `edits` of one `update_frame_body` call. The call is all or nothing: if one edit doesn't match, nothing changes.
+   - A big change is split into `deploy_edits_1.json`, `deploy_edits_2.json`, ... of about 18,000 characters each. Send one call per file in order and check `bodySizeBytes` against the size printed for that batch before sending the next. The OKEA story upgrade went out as 52 edits in 3 batches and matched to the byte.
+   - Every edit keeps at least one line of context. A pure deletion with none (old line, new empty string) leaves a blank line behind, so the size check fails.
 4. Once Pigment's `bodySizeBytes` matches, run `py -3.12 -I deploy_edits.py --deployed` so `deployed.js` follows the live body. Start `deployed.js` the same way right after `create_frame`, once `search_frames` shows the expected size.
 5. `update_frame_body` starts a new draft, so Mike publishes again.
 
@@ -273,7 +275,7 @@ One cockpit is the minimum. Mike wants a **set of frames per POC**, each in the 
 |---|---|---|---|
 | Cockpit | The business finance lead | The guided submit journey: drivers, status strip, return reasons, action bar | `assets/examples/reconomy-cockpit/` |
 | Review inbox | The group reviewer | Email-style three panes: folders by status, a thread per submission, the figures behind it, Approve or Return with a reason | `assets/examples/reconomy-inbox/` |
-| CFO story | The CFO and the board | Prezi-style zooming story on one map, every number and sentence from live data | `assets/examples/reconomy-cfo-story/` |
+| CFO story | The CFO and the board | Prezi-style zooming story on one map, every number and sentence from live data; smooth camera, tooltips and drill on every slide | `assets/examples/okea-board-pack-story/` (newest), `assets/examples/reconomy-cfo-story/` |
 | Signature 3D view | Everyone, as the wow moment | A 3D way into the data, chosen laterally from the client's business | `assets/examples/reconomy-world/` |
 
 **Branding per customer.** Each frame starts with a `BRAND` block: name, title, palette, font stack, logo SVG, series colours and labels. A frame for a new customer is that block, a `CFG` block (version names, actuals-to month, stage names) and the bindings. Everything else comes from data.
@@ -302,7 +304,22 @@ Mike's test: "a Prezi kind of zooms into itself cleverly rather than zooming in 
 - **The overview is one picture of the whole story** (Reconomy: their loop drawn as a ring in three coloured arcs, the headline at the centre, six topic circles on the ring, each showing a live miniature of its slide).
 - **Each next view lives inside an element of the current one**, in a small "portal" circle: the EBITDA hero tile holds the FY26 bridge, the bridge's biggest variance bar holds month by month, "Two engines" holds one circle per engine, the biggest scheme bar holds the line-by-line pass-through, and the readiness ring holds "Returned, and why". A topic can be on the ring or inside a tile, not both: decide where each one lives before building.
 - **Measure child positions from the rendered portal elements** on each render, not from hand-placed coordinates, so a slide's own layout decides where its children sit. Account for parent borders: an unaccounted border left a nested slide 8px off.
-- **Camera path:** zoom out only as far as the common parent, then dive into the next target, with an ease that pulls back a little mid-flight. Pulse the element you're about to enter, fade the parent while deep, and show a breadcrumb (Overview › Against budget › Month by month).
+- **Camera path: one smooth curve at an even pace** (Mike, OKEA 23 Nov 2026: "smooth the transitions a bit, they're not a uniform pace and a bit jolty"):
+  - The jolty version flew two legs, out to the common parent and then in, joined at a corner. On top of that, a cubic ease-in-out peaked at about 3× the average speed.
+  - Use one van Wijk zoom-and-pan curve from the current camera to the target instead. It is the path d3's zoom uses: it pulls back only as far as the move needs and dives in again with no corner, at an even perceived speed. RHO 1.5 gives a little more pull-back than d3's √2 and reads as Prezi.
+  - Ease the curve with soft ends and a steady middle: the speed rises over the first 28% of the move on a sine, holds, then settles over the last 28%.
+  - Set the duration from the path length so every move has the same perceived speed: 1000 ms per unit of path, clamped to 1.0-2.6 s.
+  - Pulse the element you're entering while the camera moves, not before it: a pause, then a launch, reads as a jolt.
+  - Fade the parent while deep, and show a breadcrumb (Overview › Against budget › Month by month).
+  - Code: `zoomPath()`, `ease()` and `fly()` in `assets/examples/okea-board-pack-story/okea_story.src.js`.
+  - **Test the motion by replaying the maths, not by watching the preview pane.** The pane throttles `requestAnimationFrame` (3-8 frames in 2 s). Replay each move at 60 fps against the rendered card positions and compute the perceived speed per frame: the change in log zoom plus pan in screen widths.
+  - Targets: peak speed at most about 1.8× the move's average, and no frame-to-frame speed jump over 10% of peak. OKEA went from 3.1× and 81% to 1.7× and 9%. The replay script is in that example's README.
+- **Hover and drill on every slide** (Mike, OKEA 23 Nov 2026: "give tooltips and drilling capabilities over the slide data"):
+  - **Hit areas:** every chart gets invisible hit rectangles (`hit()`) over each whole row or column, drawn last so they sit on top, with `data-tip` (text, first line bold) and `data-drill` (a key). A faint fill on hover shows what is clickable. Hero tiles, status counts and name chips carry `data-tip` and `data-drill` as attributes.
+  - **One tooltip** follows the pointer, built with `textContent` (never `innerHTML` from data). It shows only on the slide in view and hides while the camera flies.
+  - **Drill keys** describe the thing, not the screen: `a|asset`, `c|class`, `y|year`, `r|reason`. Clicking one opens a right-hand panel that slides in, with tiles and this-round / previous / change tables. Every row drills again; Back walks a stack; ×, Esc and Backspace close it.
+  - **Data:** build the panel from data the frame already loads. Don't add sources for it.
+  - **Clicks:** a click on a drill target opens the panel instead of advancing the story. A click on the slide while the panel is open only closes it. Moving to another slide closes it.
 - **Controls:** arrows, Space, click to dive, Esc or Backspace goes up a level, O shows the overview, N shows a talk track written from live numbers. With reduced motion, cut instead of flying.
 - **Rendering:**
   - Build slide content at a fixed 1280×720 and scale it with a CSS transform on the world, so text stays sharp. Charts are inline SVG at design size.

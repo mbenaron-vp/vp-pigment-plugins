@@ -1,7 +1,9 @@
 """Turn a rebuilt frame body into update_frame_body edits.
 
     py -3.12 -I deploy_edits.py             -> deploy_edits.json: [{oldString, newString}, ...] to send as the
-                                               edits of one update_frame_body call, and the bodySizeBytes to expect
+                                               edits of one update_frame_body call, and the bodySizeBytes to expect;
+                                               a big change is split into deploy_edits_1.json, _2.json ... (one call
+                                               each, in order, checking bodySizeBytes after each)
     py -3.12 -I deploy_edits.py --deployed  -> once Pigment confirms that size, copy the new body to deployed.js
 
 deployed.js is an exact copy of the body live in Pigment; <NAME>.js is the new build. Start deployed.js with
@@ -20,6 +22,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from build_frame import BODY_PATH, HERE, read
 
 LIMIT = 19000
+BATCH = 18000  # characters of oldString + newString per update_frame_body call
 DEPLOYED = os.path.join(HERE, 'deployed.js')
 
 
@@ -59,8 +62,27 @@ if __name__ == '__main__':
                  'run: py -3.12 -I deploy_edits.py --deployed')
     old, new = read(DEPLOYED), read(BODY_PATH)
     edits = make_edits(old, new) if old != new else []
-    with open(os.path.join(HERE, 'deploy_edits.json'), 'w', encoding='utf-8', newline='\n') as f:
-        json.dump(edits, f, ensure_ascii=False, indent=1)
-    print('%d edit(s), %s characters to send; expect bodySizeBytes %s'
-          % (len(edits), format(sum(len(e['oldString']) + len(e['newString']) for e in edits), ','),
-             format(len(new.encode('utf-8')), ',')))
+    # One update_frame_body call per batch of about 18,000 characters; check bodySizeBytes after each batch.
+    batches, cur, size = [], [], 0
+    for e in edits:
+        n = len(e['oldString']) + len(e['newString'])
+        if cur and size + n > BATCH:
+            batches.append(cur)
+            cur, size = [], 0
+        cur.append(e)
+        size += n
+    if cur or not batches:
+        batches.append(cur)
+    for name in os.listdir(HERE):
+        if name.startswith('deploy_edits') and name.endswith('.json'):
+            os.remove(os.path.join(HERE, name))
+    body = old
+    for k, batch in enumerate(batches):
+        name = 'deploy_edits.json' if len(batches) == 1 else 'deploy_edits_%d.json' % (k + 1)
+        with open(os.path.join(HERE, name), 'w', encoding='utf-8', newline='\n') as f:
+            json.dump(batch, f, ensure_ascii=False, indent=1)
+        for e in batch:
+            body = body.replace(e['oldString'], e['newString'])
+        print('%s: %d edit(s), %s characters; expect bodySizeBytes %s'
+              % (name, len(batch), format(sum(len(e['oldString']) + len(e['newString']) for e in batch), ','),
+                 format(len(body.encode('utf-8')), ',')))
