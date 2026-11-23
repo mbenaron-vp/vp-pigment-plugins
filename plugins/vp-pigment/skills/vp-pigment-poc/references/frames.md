@@ -320,6 +320,8 @@ Mike's test: "a Prezi kind of zooms into itself cleverly rather than zooming in 
   - **Drill keys** describe the thing, not the screen: `a|asset`, `c|class`, `y|year`, `r|reason`. Clicking one opens a right-hand panel that slides in, with tiles and this-round / previous / change tables. Every row drills again; Back walks a stack; ×, Esc and Backspace close it.
   - **Data:** build the panel from data the frame already loads. Don't add sources for it.
   - **Clicks:** a click on a drill target opens the panel instead of advancing the story. A click on the slide while the panel is open only closes it. Moving to another slide closes it.
+  - **Prefix every panel class** (`dr…`, `ttp`). An unprefixed `one` row class picked up the closing slide's 32px `.one` text style and blew up the panel rows (Reconomy, 23 Nov 2026).
+  - The same upgrade on the Reconomy CFO story is `patch_v3.py` in that client folder: it copies the camera, event and panel code from the OKEA example and adds drill views for entity, P&L line, month, scheme, sector and currency.
 - **Controls:** arrows, Space, click to dive, Esc or Backspace goes up a level, O shows the overview, N shows a talk track written from live numbers. With reduced motion, cut instead of flying.
 - **Rendering:**
   - Build slide content at a fixed 1280×720 and scale it with a CSS transform on the world, so text stays sharp. Charts are inline SVG at design size.
