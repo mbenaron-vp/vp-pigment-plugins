@@ -31,7 +31,8 @@ The bar:
 | `assets/examples/frame-build-kit/` | Building a frame with Python: build script with Pigment's safe-code lint, mock SDK, design page for an Artifact, pull and deploy scripts |
 | `assets/examples/reconomy-cockpit/` | The newest house-standard cockpit: branded design, submission and return workflow, process graphic, action bar. Its README says which functions to lift |
 | `assets/examples/reconomy-inbox/` | Review inbox: email-style approve or return with a reason |
-| `assets/examples/reconomy-cfo-story/` | CFO story: Prezi-style nested zoom over live numbers |
+| `assets/examples/okea-board-pack-story/` | CFO story, newest: one smooth zoom curve at an even pace, tooltips and drill on every slide |
+| `assets/examples/reconomy-cfo-story/` | CFO story, first version: Prezi-style nested zoom over live numbers |
 | `assets/examples/reconomy-world/` | Signature 3D view, here a canvas globe driven by the model's Country properties |
 | `assets/examples/trust-payments-spm-cockpit/` | An earlier complete frame to copy from |
 

@@ -20,6 +20,8 @@ Overview (the loop)
 - 12 Decisions (ring), 13 In one line (ring).
 
 ## Camera and controls
+**Superseded for new builds:** `../okea-board-pack-story/` replaces the two-leg flight below with one smooth curve at an even pace, and adds tooltips and click-to-drill on every slide.
+
 - Child positions are measured from the portal elements after each render (offsetLeft/Top up to the card), so a slide's layout decides where its children sit.
 - A move flies out only as far as the common parent, then into the target. Zooming in keeps the destination steady on screen; zooming out keeps the place you left steady; one eased curve over the whole path. The element you are about to dive into pulses first.
 - While deep, four bands around the current slide dim and blur the parent context (backdrop-filter, so the cost is screen-sized, not world-sized).
