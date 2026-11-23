@@ -84,6 +84,7 @@ For each step, in story order:
 - **Click:** Next.
 
 Then:
+- **The custom agent** (`agent.md`): a Part 1 section (what it is, what it knows, what it can do, the four starters) and a Part 2 step at the end of the board whose question it answers. Give the starter, the expected answer with its numbers from the test, and "Enter sends; answers take 1-2 minutes; collapse the chat-history sidebar first".
 - **Optional finale:** the cockpit frame. Permission prompt: choose "For this session". Tour behaviour: skip, or use the Guide button. Untick private before the call.
 - **Likely questions** with short answers.
 - **Reset table:** every input touched in the script with its baseline value, plus the baseline headline numbers to check against before starting.
