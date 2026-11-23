@@ -280,6 +280,31 @@ One cockpit is the minimum. Mike wants a **set of frames per POC**, each in the 
 
 **Branding per customer.** Each frame starts with a `BRAND` block: name, title, palette, font stack, logo SVG, series colours and labels. A frame for a new customer is that block, a `CFG` block (version names, actuals-to month, stage names) and the bindings. Everything else comes from data.
 
+**The client's real logo, never an invented mark** (Mike, OKEA 23 Nov 2026, after a made-up wave mark went live). Ask Mike for the client's logo at intake. Frames can't load image files, so trace it into inline SVG:
+- Measure the logo image with System.Drawing (PowerShell) or PIL. Find the letter spans from column occupancy, then the run starts and ends on sample rows and columns. Treat transparent pixels as background.
+- Rebuild it from circles, rects and polygons in the image's own coordinates, with a cropped `viewBox`. Put it in one `logo(h, fill)` function in the `BRAND` block.
+- Check the trace: lay the SVG over the original image in a scratch page at full size. No original colour should show at any edge.
+- Use the brand's own colour on light backgrounds and white on dark headers. The logo is the wordmark, so drop the separate text name beside it.
+- Until Mike has supplied the logo, show the client's name as plain text and no mark.
+
+**No logo file from Mike: trace it from the client's website** (Reconomy, 23 Nov 2026). With Mike's OK, use the logo the client's own site serves. Sites often have only WebP versions. System.Drawing can't read WebP, and PIL may not be installed, so trace it in the browser with `assets/examples/frame-build-kit/trace_logo.js`. This auto-trace also suits a wordmark set in a typeface, which is too fiddly to rebuild from shapes.
+- **Find the files:** open the client's home page in Chrome and list the `img`/`svg` elements in the header and footer. An inline SVG or `.svg` file needs no trace: read its markup and use that. Otherwise take the logo's raster files. The header usually has the colour version and the footer a white-on-dark one; trace the one whose shapes separate most cleanly.
+- **Run the tracer on the client's site itself:** the same origin keeps the canvas readable. Set `URL` to the file and `SEEDS` to the logo's flat colours. The script refines the colours, then traces in three passes:
+  - colour membership x alpha per pixel;
+  - marching squares (0.5 for the base layer, 0.4 for shapes drawn on top, so they cover seams);
+  - Douglas-Peucker at 0.3 px.
+
+  The result is one evenodd path per colour in the image's own coordinates. A 500 x 113 logo comes to about 5 KB of path data.
+- **Read the result back with `get_page_text`, not the javascript result:** javascript output truncates at about 1,000 characters. Write the JSON into a `<pre>` inside an `<article>` and read the page text.
+- **Assemble `<client>Logo(h, fill)`:**
+  - the wordmark path in `fill`;
+  - a filled circle in `fill` under any round mark, so no background shows through hairline gaps where colour layers meet;
+  - the coloured shapes in their brand colours on top.
+
+  Drop the circle's outline loop and the holes the coloured shapes leave in the base layer: the circle covers them. Use a `viewBox` cropped to the opaque pixels.
+- **Check it before building:** render the SVG beside both originals at 5x, on white and on the dark header colour, and look at every edge.
+- **Check the deploy:** build each frame and check its header in the harness. Deploy with `update_frame_body` and compare `bodySizeBytes` with the build.
+
 **Design each one in an Artifact first** ("Design in an Artifact, deploy to the frame" above), and deploy only when Mike says "send it".
 
 ### Review inbox

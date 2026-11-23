@@ -11,7 +11,7 @@
       "name": "vp-pigment",
       "source": "./plugins/vp-pigment",
       "description": "Build or review a client-tailored, VantagePoint-branded Pigment demo or POC: story, boards, cockpit frame, demo script with a model explainer, and a test pass.",
-      "version": "1.8.0"
+      "version": "1.8.1"
     }
   ]
 }

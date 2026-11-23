@@ -1,6 +1,6 @@
 {
   "name": "vp-pigment",
-  "version": "1.8.0",
+  "version": "1.8.1",
   "description": "VantagePoint method for Pigment demos and client POCs: run of show, client story, VP-styled boards, guided cockpit frame, two-part demo script (model explainer + click path) and test pass.",
   "author": {
     "name": "VantagePoint Consulting"
