@@ -9,6 +9,7 @@ Build a frame from readable source with Python, check it against Pigment's safe-
 | `deploy_edits.py` | Diffs `deployed.js` (the live body) against the new build and writes `update_frame_body` edits; `--deployed` once Pigment confirms the size |
 | `mock_sdk.js` | Mock `PigmentSDK`: a generator per data source over an input state the sinks write to, filter positions, the 10-subscription limit, `__writes`, `__refuse` |
 | `example_frame.src.js` | A small working frame (one source, one lever, KPI tiles, a clickable SVG chart, click-to-explain, queued writes, Reset) to show the pattern. Copy the structure from the Trust Payments example for a real cockpit. |
+| `trace_logo.js` | Traces the client's raster logo (PNG, WebP, JPG) into SVG paths in the browser, on the client's own website. Method and checks in `references/frames.md`, "No logo file from Mike" |
 | `story.json` | Sample story text for the example. On a POC, the scripts read the client's `story.json` one folder up instead. |
 
 ## Use it on a POC
