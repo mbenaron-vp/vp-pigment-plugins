@@ -278,6 +278,13 @@ One cockpit is the minimum. Mike wants a **set of frames per POC**, each in the 
 
 **Branding per customer.** Each frame starts with a `BRAND` block: name, title, palette, font stack, logo SVG, series colours and labels. A frame for a new customer is that block, a `CFG` block (version names, actuals-to month, stage names) and the bindings. Everything else comes from data.
 
+**The client's real logo, never an invented mark** (Mike, OKEA 23 Nov 2026, after a made-up wave mark went live). Ask Mike for the client's logo at intake. Frames can't load image files, so trace it into inline SVG:
+- Measure the logo image with System.Drawing (PowerShell) or PIL. Find the letter spans from column occupancy, then the run starts and ends on sample rows and columns. Treat transparent pixels as background.
+- Rebuild it from circles, rects and polygons in the image's own coordinates, with a cropped `viewBox`. Put it in one `logo(h, fill)` function in the `BRAND` block.
+- Check the trace: lay the SVG over the original image in a scratch page at full size. No original colour should show at any edge.
+- Use the brand's own colour on light backgrounds and white on dark headers. The logo is the wordmark, so drop the separate text name beside it.
+- Until Mike has supplied the logo, show the client's name as plain text and no mark.
+
 **Design each one in an Artifact first** ("Design in an Artifact, deploy to the frame" above), and deploy only when Mike says "send it".
 
 ### Review inbox
