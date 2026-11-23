@@ -1,0 +1,317 @@
+{
+ "name": "OKEA board pack story",
+ "bindings": [
+  {
+   "type": "List",
+   "name": "versionList",
+   "listId": "b94c3e5a-546d-4c8b-acc2-5d2f3fb95e2e"
+  },
+  {
+   "type": "List",
+   "name": "yearList",
+   "listId": "336e1b3b-971f-41f4-85a5-e100276d22ea"
+  },
+  {
+   "type": "List",
+   "name": "monthList",
+   "listId": "c3150565-b221-4f93-946a-f16f7fdaaa3c"
+  },
+  {
+   "type": "List",
+   "name": "assetList",
+   "listId": "00e0ab72-8cd7-4db2-888c-6f4df3bc8448"
+  },
+  {
+   "type": "List",
+   "name": "classList",
+   "listId": "917ca4a1-1ac3-43e2-a41a-786727a7aa39"
+  },
+  {
+   "type": "List",
+   "name": "reasonList",
+   "listId": "dd7f6ea6-84f1-4b8d-b82d-33931eae7462"
+  },
+  {
+   "type": "List",
+   "name": "productList",
+   "listId": "731c7580-d406-4c25-a2cf-bcdb996eaf35"
+  },
+  {
+   "type": "List",
+   "name": "stageList",
+   "listId": "2b969b1f-e376-4655-858a-69b6025b9be1"
+  },
+  {
+   "type": "ListProperty",
+   "name": "projAsset",
+   "listId": "f5538c9f-0c9d-404d-a561-c6af788e7404",
+   "listPropertyTechnicalName": "asset_18VP5S"
+  },
+  {
+   "type": "ListProperty",
+   "name": "assetWI",
+   "listId": "00e0ab72-8cd7-4db2-888c-6f4df3bc8448",
+   "listPropertyTechnicalName": "working_interest_7C48J6"
+  },
+  {
+   "type": "Metric",
+   "name": "mCostY",
+   "metricId": "829e60ea-6e77-4dd7-a549-d5575a637e17"
+  },
+  {
+   "type": "Metric",
+   "name": "mProdY",
+   "metricId": "6c327f85-9c94-4407-a390-a296993eeca1"
+  },
+  {
+   "type": "Metric",
+   "name": "mPrdxA",
+   "metricId": "28fd7333-04e7-4af3-93b7-d45df32aa1db"
+  },
+  {
+   "type": "Metric",
+   "name": "mOpexA",
+   "metricId": "638fb02b-90fb-4d90-9ba4-d3ee285e1347"
+  },
+  {
+   "type": "Metric",
+   "name": "mFyCost",
+   "metricId": "b35203da-531b-42c9-8920-fb3ab7dea667"
+  },
+  {
+   "type": "Metric",
+   "name": "mReason",
+   "metricId": "8d5b6196-6a97-444a-9bf4-87632725b955"
+  },
+  {
+   "type": "Metric",
+   "name": "mNetProd",
+   "metricId": "d2a2b096-e18a-498d-957d-6591e84fd822"
+  },
+  {
+   "type": "Metric",
+   "name": "mCo2Tax",
+   "metricId": "30b14ca0-feca-43b1-98b8-9cbdf496a0c1"
+  },
+  {
+   "type": "Metric",
+   "name": "mCo2Price",
+   "metricId": "6d38ed29-2f35-4638-a34a-36a07ea38f22"
+  },
+  {
+   "type": "Metric",
+   "name": "mWfStatus",
+   "metricId": "a13574f0-4db1-4da8-926a-127683b12091"
+  },
+  {
+   "type": "Metric",
+   "name": "mWfComment",
+   "metricId": "77fd4d7c-874c-495b-8f7c-b58b49edb460"
+  },
+  {
+   "type": "Metric",
+   "name": "mWfOwner",
+   "metricId": "da36d10b-b536-45ba-8455-b0f805df9856"
+  },
+  {
+   "type": "Metric",
+   "name": "mWfReturn",
+   "metricId": "6b1dec77-59e8-42fe-bc1a-6f03e114e0ab"
+  }
+ ],
+ "dataSources": [
+  {
+   "name": "dsAY",
+   "labels": [
+    {
+     "binding": "assetList"
+    },
+    {
+     "binding": "yearList"
+    },
+    {
+     "binding": "versionList"
+    }
+   ],
+   "selectors": [
+    {
+     "binding": "versionList"
+    },
+    {
+     "binding": "yearList"
+    }
+   ],
+   "values": [
+    {
+     "binding": "mCostY"
+    },
+    {
+     "binding": "mProdY"
+    },
+    {
+     "binding": "mPrdxA"
+    },
+    {
+     "binding": "mOpexA"
+    }
+   ]
+  },
+  {
+   "name": "dsClass",
+   "labels": [
+    {
+     "binding": "assetList"
+    },
+    {
+     "binding": "classList"
+    },
+    {
+     "binding": "versionList"
+    }
+   ],
+   "selectors": [
+    {
+     "binding": "versionList"
+    }
+   ],
+   "values": [
+    {
+     "binding": "mFyCost"
+    }
+   ]
+  },
+  {
+   "name": "dsReason",
+   "labels": [
+    {
+     "binding": "assetList"
+    },
+    {
+     "binding": "reasonList"
+    },
+    {
+     "binding": "versionList"
+    }
+   ],
+   "selectors": [
+    {
+     "binding": "versionList"
+    }
+   ],
+   "values": [
+    {
+     "binding": "mReason"
+    }
+   ]
+  },
+  {
+   "name": "dsProduct",
+   "labels": [
+    {
+     "binding": "projAsset"
+    },
+    {
+     "binding": "productList"
+    },
+    {
+     "binding": "versionList"
+    }
+   ],
+   "selectors": [
+    {
+     "binding": "versionList"
+    },
+    {
+     "binding": "monthList"
+    }
+   ],
+   "values": [
+    {
+     "binding": "mNetProd"
+    }
+   ]
+  },
+  {
+   "name": "dsCO2",
+   "labels": [
+    {
+     "binding": "yearList"
+    },
+    {
+     "binding": "versionList"
+    }
+   ],
+   "selectors": [
+    {
+     "binding": "versionList"
+    },
+    {
+     "binding": "yearList"
+    }
+   ],
+   "values": [
+    {
+     "binding": "mCo2Tax"
+    },
+    {
+     "binding": "mCo2Price"
+    }
+   ]
+  },
+  {
+   "name": "dsWFS",
+   "labels": [
+    {
+     "binding": "assetList"
+    },
+    {
+     "binding": "stageList"
+    }
+   ],
+   "selectors": [],
+   "values": [
+    {
+     "binding": "mWfStatus"
+    }
+   ]
+  },
+  {
+   "name": "dsWFC",
+   "labels": [
+    {
+     "binding": "assetList"
+    },
+    {
+     "binding": "stageList"
+    }
+   ],
+   "selectors": [],
+   "values": [
+    {
+     "binding": "mWfComment"
+    },
+    {
+     "binding": "mWfOwner"
+    },
+    {
+     "binding": "mWfReturn"
+    }
+   ]
+  },
+  {
+   "name": "dsAssetP",
+   "labels": [
+    {
+     "binding": "assetList"
+    }
+   ],
+   "selectors": [],
+   "values": [
+    {
+     "binding": "assetWI"
+    }
+   ]
+  }
+ ],
+ "dataSinks": []
+}
