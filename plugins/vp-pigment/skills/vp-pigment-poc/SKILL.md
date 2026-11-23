@@ -26,6 +26,7 @@ The bar:
 | `references/frames.md` | Building or changing a frame: Pigment limits, SDK patterns, explain panel, tour, submission and return workflow, local testing |
 | `references/demo-script.md` | Writing the demo script: Part 1 model explainer and Part 2 click path |
 | `references/testing.md` | The test pass and the browser check |
+| `references/agent.md` | Building the client's custom agent: the text, filling Pigment's form, testing it, and its moment in the demo |
 | `assets/frame-test-harness.html`, `assets/serve.ps1` | Testing a frame locally without Python |
 | `assets/examples/frame-build-kit/` | Building a frame with Python: build script with Pigment's safe-code lint, mock SDK, design page for an Artifact, pull and deploy scripts |
 | `assets/examples/reconomy-cockpit/` | The newest house-standard cockpit: branded design, submission and return workflow, process graphic, action bar. Its README says which functions to lift |
@@ -82,6 +83,7 @@ These are the house standard. Read their actual code with `search_frames` (by `i
 | MAT Planning Cockpit (click to explain) | `804ef304-8e38-4dcd-94f6-92d94339ba9a` | frame `67d799be-9133-42f6-81c7-bdabcec1da51` | Click-to-explain panel, queued writes with a "recalculating" state, driver editor |
 | MAT demo home | `804ef304-8e38-4dcd-94f6-92d94339ba9a` | board `2cf6a4dc-6751-4cde-9327-049a5fda1250` | Home board: client logo, cockpit card, numbered story boxes, one card per board |
 | Reconomy board 1, edited by Mike (Nov 2026) | `0e12a5ce-8b90-48b5-9fb0-c786e53c76ad` | board `01488672-c031-4512-8b3c-5de15f8d9020` | Header standard: no title row, bold H2 section headers sized to their words, italic instruction beside each; Guide as a static link to the frame |
+| OKEA forecast assistant (Nov 2026) | `ff4911a0-93fc-4c01-90b3-12aefacac4ed` | custom agent `5ad9f9ed-9197-4625-96ec-cbe76a64f286` (Custom Agents & Missions) | The custom agent standard: instructions, knowledge as a condensed Part 1 with live values, four starters; starter 1 answered the variance question with the right numbers, line and return reason |
 
 If a newer POC beats these, add it to this table.
 
@@ -163,6 +165,7 @@ Deliberate overrides of Pigment's board guidance, for demo apps only:
     - a **Workflow tracker** board as the last step: progress KPI, count by status, colour-coded status heatmap, stacked bar by stage, progress by entity, and the full review-and-approve grid
     - seeded data that tells a story (one entity ahead, one behind, one item returned with a comment that ties to the variance story)
     Pattern in `references/boards.md`.
+19. **Every POC has a custom agent named for the client** (Mike, OKEA 23 Nov 2026: "absolutely standard for all demos going forward"). A Pigment custom agent ("<Client> <process> assistant") in AI Chats, active for every member of the app. Its instructions say who it helps and how to answer (the client's words, always say the round, period and entity, formula in words plus live values plus the board, never change data). Its knowledge is a condensed Part 1 of the demo script with that day's live numbers. It has four starters, led by the story's headline "why did X move?" question. Starter 1 is tested against the demo script before the call, and the agent has a two-minute moment in the demo. Pattern in `references/agent.md`.
 
 ## Single source of truth: the story file
 
@@ -313,6 +316,14 @@ Read `references/frames.md` first. Every POC gets the frame set ("The POC frame 
 - **Design in an Artifact** (Mike, Nov 2026): publish the kit's `design.html` (the frame's real code on mock data) as a private Artifact and give Mike the link. He restyles it in claude.ai; pull it back with `pull_design.py` and deploy only the changed lines with `deploy_edits.py` (`references/frames.md`, "Design in an Artifact, deploy to the frame").
 - The frame is private until Mike unticks it, and the first write asks permission.
 
+### Phase 4c - Custom agent
+
+Read `references/agent.md`. Once the boards and Part 1 of the demo script are done:
+- Write `specs/<client>/agent/<client>-agent.md`: name, description, instructions, knowledge (condensed Part 1, live values), four starters.
+- Create it in Custom Agents & Missions (direct URL `.../all-settings/ai-agents/custom/new`). Fill name, description and starters with `form_input`. Paste instructions and knowledge as HTML through a synthetic paste event; never type into the ProseMirror boxes. Turn on Activate agent, then Save.
+- Test starter 1 in AI Chats (click the starter, press Enter, wait 1-2 minutes) and check every number against the demo script.
+- Before screen-sharing AI Chats, collapse the chat-history sidebar: it lists chats from every app, including other clients'.
+
 ### Phase 5 - Test pass
 
 Read `references/testing.md`. Test every change in the demo script on the live model:
@@ -338,6 +349,7 @@ Check every board in the browser. Report a pass/fail table and write it into `bu
    - charts beside grids
    - browser check
 6. **Frame:** if there isn't one, build it. If there is, upgrade it in a **new frame** and keep the old one as a fallback.
+6a. **Custom agent:** if there isn't one, build it (Phase 4c). If there is, refresh its knowledge with today's baseline numbers and re-test starter 1.
 7. **Demo script and test pass** (Phases 5-6).
 8. **Report back**, as short as possible:
    - Verdict per demo: ready to rehearse, or not, and why.
@@ -360,6 +372,7 @@ All in the client folder.
   - known gaps with answers
 - **Part 2 - The demo:**
   - per board: pain, say, point at, change, watch, put back, line, next
+  - the custom agent moment (starter 1 and its tested answer)
   - the cockpit finale
   - likely questions
   - a reset table with baseline values
@@ -407,6 +420,7 @@ Give Mike a short chat summary: the click path in one line per screen, what wasn
 - Home has the client logo and a card for every board in the story
 - No orphan metrics or assumptions; every view saved and every widget pointing at the saved view; boards and frame open on the story's opening case
 - The frame has click-to-explain on every number and driver tile, a guided tour with Skip and Esc, write-back with reset, and is not private
+- A custom agent named for the client is active for all app members, its text is in `agent/<client>-agent.md`, starter 1 has been answered with the demo script's numbers, and the demo script has its Part 1 section and Part 2 moment
 - Mike has approved the design page, and the live frame matches the approved build (lint clean, `deploy_edits.py` shows 0 edits)
 - Real data is reconciled against the named source file, illustrative data is labelled, and template leftovers are gone
 - The test pass table is green, or each exception is explained
